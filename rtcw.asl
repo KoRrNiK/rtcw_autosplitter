@@ -4,17 +4,35 @@ state("WolfSP")
 	byte cs : 0x26F4, 0x0;
 	int client_status: 0xB24EE0;
 	float camera_x: "WolfSP.exe", 0xDA9D3C;
+	
 	float xpos : "WolfSP.exe", 0x5F8Da4;
+	float ypos : "WolfSP.exe", 0x5F8Da8;
+	float zpos : "WolfSP.exe", 0x5F8Dac;
+	
+	byte finish: "qagamex86.dll", 0x2B876C;	
+	//byte finish: "WolfSP.exe", 0xA398CC;		// blue bar 
+	
+	
 }
 
 startup 
 {
+	
 	settings.Add("cat_all", true, "Full game");
-	settings.Add("cat_chap1", false, "Ominous Rumors + Dark Secret");
-	settings.Add("cat_chap2", false, "Weapons of Vengeance");
-	settings.Add("cat_chap3", false, "Deadly Designs");
-	settings.Add("cat_chap4", false, "Deathshead's Playground");
-	settings.Add("cat_chap5", false, "Return Engagement + Operation Resurrection");
+	
+	settings.Add("chaptersOnly", false, "Chapters");
+	settings.Add("cat_chap1", false, "Ominous Rumors + Dark Secret", "chaptersOnly");
+	settings.Add("cat_chap2", false, "Weapons of Vengeance", "chaptersOnly");
+	settings.Add("cat_chap3", false, "Deadly Designs", "chaptersOnly");
+	settings.Add("cat_chap4", false, "Deathshead's Playground", "chaptersOnly");
+	settings.Add("cat_chap5", false, "Return Engagement + Operation Resurrection", "chaptersOnly");
+
+	settings.Add("missionsFirstChapters", false, "Firsts Missions Chapters");
+	settings.Add("miss_chap_1", false, "Escape", "missionsFirstChapters");
+	settings.Add("miss_chap_2", false, "Forest", "missionsFirstChapters");
+	settings.Add("miss_chap_3", false, "SFM", "missionsFirstChapters");
+	settings.Add("miss_chap_4", false, "Norway", "missionsFirstChapters");
+	settings.Add("miss_chap_5", false, "Dam", "missionsFirstChapters");
 
 	Action<string> DebugOutput = (text) => {
 		print("[RTCW Autosplitter] " + text);
@@ -42,6 +60,13 @@ reset
 
 start
 {	
+
+	if(settings["miss_chap_1"]) vars.bsp_list.Add("/escape1.bsp");
+	if(settings["miss_chap_2"]) vars.bsp_list.Add("/forest.bsp");
+	if(settings["miss_chap_3"]) vars.bsp_list.Add("/sfm.bsp");
+	if(settings["miss_chap_4"]) vars.bsp_list.Add("/norway.bsp");
+	if(settings["miss_chap_5"]) vars.bsp_list.Add("/dam.bsp");
+
 	if(settings["cat_all"] || settings["cat_chap1"])
 	{
 		vars.bsp_list.Add("/escape1.bsp");
@@ -78,7 +103,7 @@ start
 	}
 
 	if(settings["cat_all"] || settings["cat_chap5"])
-	{
+	{ 
 		vars.bsp_list.Add("/dam.bsp");
 		vars.bsp_list.Add("/village2.bsp");
 		vars.bsp_list.Add("/chateau.bsp");
@@ -99,7 +124,7 @@ start
 			return true;
 		}
 	}
-	if(settings["cat_chap1"])
+	if(settings["cat_chap1"] || settings["miss_chap_1"])
 	{
 		if (current.bsp == "/escape1.bsp" && old.bsp != "/escape1.bsp") {
 			vars.DebugOutput("Timer started");
@@ -109,7 +134,7 @@ start
 			return true;
 		}
 	}
-	if(settings["cat_chap2"])
+	if(settings["cat_chap2"] || settings["miss_chap_2"])
 	{
 		if (current.bsp == "/forest.bsp" && old.bsp != "/forest.bsp") {
 			vars.DebugOutput("Timer started");
@@ -119,7 +144,7 @@ start
 			return true;
 		}
 	}
-	if(settings["cat_chap3"])
+	if(settings["cat_chap3"] || settings["miss_chap_3"])
 	{
 		if (current.bsp == "/sfm.bsp" && old.bsp != "/sfm.bsp") {
 			vars.DebugOutput("Timer started");
@@ -129,7 +154,7 @@ start
 			return true;
 		}
 	}
-	if(settings["cat_chap4"])
+	if(settings["cat_chap4"] || settings["miss_chap_4"])
 	{
 		if (current.bsp == "/norway.bsp" && old.bsp != "/norway.bsp") {
 			vars.DebugOutput("Timer started");
@@ -139,7 +164,7 @@ start
 			return true;
 		}
 	}
-	if(settings["cat_chap5"])
+	if(settings["cat_chap5"] || settings["miss_chap_5"])
 	{
 		if (current.bsp == "/dam.bsp" && old.bsp != "/dam.bsp") {
 			vars.DebugOutput("Timer started");
@@ -220,11 +245,41 @@ split
 	
 	if(settings["cat_chap4"] && current.bsp == "/boss2.bsp")
 	{
-		if(current.xpos >= 1454.0 && old.xpos < 1454.0 && current.xpos <= 1500.0 && old.xpos > 1300.0)
+		if(current.xpos >= 1454.0 && old.xpos < 1454.0 && current.xpos <= 1500.0 && old.xpos > 1300.0 && current.finish != 0)
 		{
 			return true;
 		}
 	}
+	
+	if(settings["miss_chap_1"] && current.bsp == "/escape1.bsp"){
+		if(old.xpos >= -3662.0 && current.xpos < -3662.0 && current.ypos >= 850.0 && current.finish != 0){	
+				return true;
+		}	
+	}
+	if(settings["miss_chap_2"] && current.bsp == "/forest.bsp"){
+		if(current.xpos == -4800.0 && current.ypos == -896.0 && current.zpos == 256.0){	
+				return true;
+		}
+	}
+	if(settings["miss_chap_3"] && current.bsp == "/sfm.bsp"){
+		if(current.zpos <= -153.0 && old.xpos <= -850.0 && current.ypos >= 2150.0 && current.finish != 0){
+				return true;
+		}
+	}
+	if(settings["miss_chap_4"] && current.bsp == "/norway.bsp"){
+		if(current.ypos >= -1450.0 && current.xpos <= -7998.0){
+			return true;
+		}
+	}
+	if(settings["miss_chap_5"] && current.bsp == "/dam.bsp"){
+	
+		if(current.finish != 0){
+			return true;
+		}
+	}
+
+	
+	
 }
 
 update
