@@ -1,14 +1,34 @@
+state("WolfSP", "1.1 S-R"){
+	
+	string16 bsp 		: 		"WolfSP.exe", 		0x693664;
+	byte cs 			: 		"WolfSP.exe", 		0xEA7B64;
+	
+	int client_status	: 		"WolfSP.exe", 		0x68D054;//0x68CFA4;
+	byte ESC			:		"WolfSP.exe", 		0x689AE0;
+	
+	float camera_x		: 		"WolfSP.exe", 		0x7A2FBC;
+	float xpos 			: 		"WolfSP.exe", 		0x77B0DC;
+	float ypos 			: 		"WolfSP.exe",	 	0x7A2FC4;
+	float zpos 			: 		"WolfSP.exe", 		0x77B0E0;
+	
+	// Only used for individual chapter levels
+	int finish			: 		"qagamex86.dll",	0x5F80FC;	// no work ( SWF ) 
+	
+}
+
 state("WolfSP", "1.42d"){
-	string16 bsp : 0x13D4, 0x8;
-	byte cs : 0x26F4, 0x0;
-	int client_status: 0xB24EE0;
-	float camera_x: "WolfSP.exe", 0xDA9D3C;
 	
-	float xpos : "WolfSP.exe", 0x5F8Da4;
-	float ypos : "WolfSP.exe", 0x5F8Da8;
-	float zpos : "WolfSP.exe", 0x5F8Dac;
+	string16 bsp 		: 		0x13D4, 			0x8;
+	byte cs 			: 		0x26F4, 			0x0;
+	int client_status	: 		0xB24EE0;
 	
-	byte finish: "qagamex86.dll", 0x6E9F7C;	
+	float camera_x		: 		"WolfSP.exe", 		0xDA9D3C;
+	float xpos 			: 		"WolfSP.exe", 		0x5F8Da4;
+	float ypos 			: 		"WolfSP.exe", 		0x5F8Da8;
+	float zpos 			: 		"WolfSP.exe", 		0x5F8Dac;
+	
+	// Only used for individual chapter levels
+	int finish			: 		"qagamex86.dll", 	0x57D7D0, 	0x42c; 
 }
 
 startup {
@@ -22,40 +42,70 @@ startup {
 	settings.Add("cat_chap4", false, "Deathshead's Playground", "chaptersOnly");
 	settings.Add("cat_chap5", false, "Return Engagement + Operation Resurrection", "chaptersOnly");
 
-	settings.Add("missionsFirstChapters", false, "Firsts Missions Chapters");
-	settings.Add("miss_chap_1", false, "Escape", "missionsFirstChapters");
-	settings.Add("miss_chap_2", false, "Forest", "missionsFirstChapters");
-	settings.Add("miss_chap_3", false, "SFM", "missionsFirstChapters");
-	settings.Add("miss_chap_4", false, "Norway", "missionsFirstChapters");
-	settings.Add("miss_chap_5", false, "Dam", "missionsFirstChapters");
+	settings.Add("individualLevels", false, "Chapter 1 Individual Levels");
+	settings.Add("miss1_chap_1", false, "Escape", "individualLevels");
+	settings.Add("individualLevelsC2", false, "Chapter 2 Individual Levels");
+	settings.Add("miss1_chap_2", false, "Forest", "individualLevelsC2");
+	settings.Add("individualLevelsC3", false, "Chapter 3 Individual Levels");
+	settings.Add("miss1_chap_3", false, "SFM", "individualLevelsC3");
+	settings.Add("individualLevelsC4", false, "Chapter 4 Individual Levels");
+	settings.Add("miss1_chap_4", false, "Norway", "individualLevelsC4");
+	settings.Add("individualLevelsC5", false, "Chapter 5 Individual Levels");
+	settings.Add("miss1_chap_5", false, "Dam", "individualLevelsC5");
+	settings.Add("miss7_chap_5", false, "Heinrich", "individualLevelsC5");
 
 	Action<string> DebugOutput = (text) => {
 		print("[RTCW Autosplitter] " + text);
 	};
 	vars.DebugOutput = DebugOutput;
+	
 }
 
 init{
+	
+	int idGame = modules.First().ModuleMemorySize;
+	
+	vars.DebugOutput("Game found!");
+	vars.DebugOutput("Module size: " + idGame);
+
+	if(idGame == 19324928) {
+		version = "1.1 S-R";
+		vars.running = true;
+	}
+	else if(idGame == 14643200) {
+		version = "1.42d";
+		vars.running = true;
+	} else {
+		vars.DebugOutput("Unrecognized game version. Disabling functionality.");
+		vars.running = false;
+		return false;
+	}
+
+	vars.DebugOutput("Found Patch " + version);
+
 	vars.firstcs = true;
-	vars.running = true;
 	vars.loadStarted = false;
 	vars.bsp_list = new List<String>();
 	vars.visited = new List<String>();
+	
 }
 
 exit{
 	vars.running = false;
 }
 
-reset{}
+shutdown{
+	vars.running = false;
+}
 
 start{	
 
-	if(settings["miss_chap_1"]) vars.bsp_list.Add("/escape1.bsp");
-	if(settings["miss_chap_2"]) vars.bsp_list.Add("/forest.bsp");
-	if(settings["miss_chap_3"]) vars.bsp_list.Add("/sfm.bsp");
-	if(settings["miss_chap_4"]) vars.bsp_list.Add("/norway.bsp");
-	if(settings["miss_chap_5"]) vars.bsp_list.Add("/dam.bsp");
+	if(settings["miss1_chap_1"]) vars.bsp_list.Add("/escape1.bsp");
+	if(settings["miss1_chap_2"]) vars.bsp_list.Add("/forest.bsp");
+	if(settings["miss1_chap_3"]) vars.bsp_list.Add("/sfm.bsp");
+	if(settings["miss1_chap_4"]) vars.bsp_list.Add("/norway.bsp");
+	if(settings["miss1_chap_5"]) vars.bsp_list.Add("/dam.bsp");
+	if(settings["miss7_chap_5"]) vars.bsp_list.Add("/end.bsp");
 
 	if(settings["cat_all"] || settings["cat_chap1"]){
 		vars.bsp_list.Add("/escape1.bsp");
@@ -108,7 +158,7 @@ start{
 			return true;
 		}
 	}
-	if(settings["cat_chap1"] || settings["miss_chap_1"]){
+	if(settings["cat_chap1"] || settings["miss1_chap_1"]){
 		if (current.bsp == "/escape1.bsp" && old.bsp != "/escape1.bsp") {
 			vars.DebugOutput("Timer started");
 			vars.firstcs = true;
@@ -117,7 +167,7 @@ start{
 			return true;
 		}
 	}
-	if(settings["cat_chap2"] || settings["miss_chap_2"]){
+	if(settings["cat_chap2"] || settings["miss1_chap_2"]){
 		if (current.bsp == "/forest.bsp" && old.bsp != "/forest.bsp") {
 			vars.DebugOutput("Timer started");
 			vars.firstcs = true;
@@ -126,7 +176,7 @@ start{
 			return true;
 		}
 	}
-	if(settings["cat_chap3"] || settings["miss_chap_3"]){
+	if(settings["cat_chap3"] || settings["miss1_chap_3"]){
 		if (current.bsp == "/sfm.bsp" && old.bsp != "/sfm.bsp") {
 			vars.DebugOutput("Timer started");
 			vars.firstcs = true;
@@ -135,7 +185,7 @@ start{
 			return true;
 		}
 	}
-	if(settings["cat_chap4"] || settings["miss_chap_4"]){
+	if(settings["cat_chap4"] || settings["miss1_chap_4"]){
 		if (current.bsp == "/norway.bsp" && old.bsp != "/norway.bsp") {
 			vars.DebugOutput("Timer started");
 			vars.firstcs = true;
@@ -144,7 +194,7 @@ start{
 			return true;
 		}
 	}
-	if(settings["cat_chap5"] || settings["miss_chap_5"]){
+	if(settings["cat_chap5"] || settings["miss1_chap_5"]){
 		if (current.bsp == "/dam.bsp" && old.bsp != "/dam.bsp") {
 			vars.DebugOutput("Timer started");
 			vars.firstcs = true;
@@ -153,10 +203,22 @@ start{
 			return true;
 		}
 	}
+	if(settings["miss7_chap_5"]){
+		if (current.bsp == "/end.bsp" && old.bsp != "/end.bsp") {
+			vars.DebugOutput("Timer started");
+			vars.firstcs = true;
+			vars.visited.Clear();
+			vars.visited.Add("/end.bsp");
+			return true;
+		}
+	}
 }
 
 split
 {
+	
+	if(!vars.running) return;
+
 	if(current.bsp != old.bsp) {
 		vars.DebugOutput("Map changed to " + current.bsp);
 		if(vars.bsp_list.Contains(current.bsp) && !vars.visited.Contains(current.bsp)){
@@ -221,38 +283,48 @@ split
 	}
 	
 	// cords:  old.xpos >= -3662.0 && current.xpos < -3662.0 && current.ypos >= 850.0  && 
-	if(settings["miss_chap_1"] && current.bsp == "/escape1.bsp"){
+	if(settings["miss1_chap_1"] && current.bsp == "/escape1.bsp"){
 		if(current.finish != 0) return true;
 	}
 	
 	// cords:  current.xpos == -4800.0 && current.ypos == -896.0 && current.zpos == 256.0
-	if (settings["miss_chap_2"] && current.bsp == "/forest.bsp" && current.cs == 1 && old.cs == 0) {
+	if (settings["miss1_chap_2"] && current.bsp == "/forest.bsp" && current.cs == 1 && old.cs == 0) {
 		if(vars.firstcs == true) return true;
 		
 	}
 	
 	// cords:  current.zpos <= -153.0 && old.xpos <= -850.0 && current.ypos >= 2150.0 &&
-	if(settings["miss_chap_3"] && current.bsp == "/sfm.bsp"){
+	if(settings["miss1_chap_3"] && current.bsp == "/sfm.bsp"){
 		if(current.finish != 0) return true;
 	}
 	
 	// cords:  current.ypos >= -1450.0 && current.xpos <= -7998.0 &&
-	if(settings["miss_chap_4"] && current.bsp == "/norway.bsp"){
+	if(settings["miss1_chap_4"] && current.bsp == "/norway.bsp"){
 		if(current.finish != 0) return true;
 	}
 	
 	// cords: no ( trigger is diagonally )
-	if(settings["miss_chap_5"] && current.bsp == "/dam.bsp"){
+	if(settings["miss1_chap_5"] && current.bsp == "/dam.bsp"){
 		if(current.finish != 0) return true;
 	}
 }
 
 update{
 	
-	if(current.client_status != 8 && current.client_status != 1) vars.loadStarted = true;
-	else{	
-		if(current.camera_x != 0) vars.loadStarted = false;
+	if(!vars.running) return;
+	
+	if(version == "1.42d"){
+		if(current.client_status != 8 && current.client_status != 1) vars.loadStarted = true;
+		else{	
+			if(current.camera_x != 0) vars.loadStarted = false;
+		}
+	} else {
+		if(current.client_status != 0 || current.ESC != 0) vars.loadStarted = true;
+		else{	
+			if(current.camera_x != 0 ) vars.loadStarted = false;
+		}
 	}
+	
 }
 
 isLoading{	 
