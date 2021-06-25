@@ -317,7 +317,8 @@ split{
 	
 	// cords:  old.xpos >= -3662.0 && current.xpos < -3662.0 && current.ypos >= 850.0 
 	if(settings["miss1_chap_1"] && current.bsp == "/escape1.bsp"){
-		if((version == "1.42d" && current.finish != 0 ) || (version == "1.45a" && current.finish == 4 )){
+		if((version == "1.42d" && current.finish != 0 ) ||
+			(version == "1.45a" && current.finish == 4 && current.ypos >= 150.0 && current.cs == 0 )){
 			if(vars.debugMessage) vars.DebugOutput("The timer has stopped (ESCAPE1)");
 			return true;
 		}
@@ -329,12 +330,12 @@ split{
 			if(vars.debugMessage) vars.DebugOutput("The timer has stopped (FOREST)");
 			return true;
 		}
-		
 	}
 	
-	// cords:  current.zpos <= -153.0 && old.xpos <= -850.0 && current.ypos >= 2150.0
+	// cords:  current.zpos <= -153.0 && old23xpos <= -850.0 && current.ypos >= 2150.0
 	if(settings["miss1_chap_3"] && current.bsp == "/sfm.bsp"){
-		if((version == "1.42d" && current.finish != 0 ) || (version == "1.45a" && current.finish == 4 )){
+		if((version == "1.42d" && current.finish != 0 ) ||
+			(version == "1.45a" && current.finish == 4 )){
 			if(vars.debugMessage) vars.DebugOutput("The timer has stopped (SFM)");
 			return true;
 		}
@@ -342,7 +343,8 @@ split{
 	
 	// cords:  current.ypos >= -1450.0 && current.xpos <= -7998.0
 	if(settings["miss1_chap_4"] && current.bsp == "/norway.bsp"){
-		if((version == "1.42d" && current.finish != 0 ) || (version == "1.45a" && current.finish == 4 )){
+		if((version == "1.42d" && current.finish != 0 ) ||
+			(version == "1.45a" && current.finish == 4 )){
 			if(vars.debugMessage) vars.DebugOutput("The timer has stopped (NORWAY)");
 			return true;
 		}
@@ -350,7 +352,8 @@ split{
 	
 	// cords: no ( trigger is diagonally )
 	if(settings["miss1_chap_5"] && current.bsp == "/dam.bsp"){
-		if((version == "1.42d" && current.finish != 0 ) || (version == "1.45a" && current.finish == 4 )){
+		if((version == "1.42d" && current.finish != 0 ) ||
+			(version == "1.45a" && current.finish == 4 && current.zpos >= 5500.0 && current.cs == 0 )){
 			if(vars.debugMessage) vars.DebugOutput("The timer has stopped (DAM)");
 			return true;
 		}
