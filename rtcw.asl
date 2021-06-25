@@ -3,26 +3,28 @@
 // https://store.steampowered.com/app/9010/
 // ----------------------------------------
 
-// patch by KoRrNiK
+// Patch by KoRrNiK
+// The bytes were found by KoRrNiK
 state("WolfSP", "1.45a"){
 	
 	string16 bsp 		: 		"WolfSP.exe", 		0x693664;
 	byte cs 			: 		"WolfSP.exe", 		0xEA7B64;
 	
-	int client_status	: 		"WolfSP.exe", 		0x68D080;
-	byte ESC			:		"WolfSP.exe", 		0x689B0C;
+	int client_status	: 		"WolfSP.exe", 		0x613420;
+	byte ESC			:		"WolfSP.exe", 		0xCCAF24; 
 	
 	float camera_x		: 		"WolfSP.exe", 		0x7A2F9C;
 	float xpos 			: 		"WolfSP.exe", 		0x77B0DC;
-	float ypos 			: 		"WolfSP.exe",	 	0x7A2FA4;
+	float ypos 			: 		"WolfSP.exe", 		0x7A2FA4;
 	float zpos 			: 		"WolfSP.exe", 		0x77B0E0;
 	
 	// Only used for individual chapter levels
-	int finish			: 		"qagamex86.dll",	0x5F80FC;	// no work ( SFM ) 
+	int finish			: 		"WolfSP.exe", 		0xDBC164;
 	
 }
 
-// patch by Knightmare
+// Patch by Knightmare
+// The bytes were found by Hoyo & KoRrNiK
 state("WolfSP", "1.42d"){
 	
 	string16 bsp 		: 		0x13D4, 			0x8;
@@ -112,6 +114,7 @@ init{
 }
 
 exit{
+	timer.IsGameTimePaused = true;
 	vars.running 		= 	false;
 }
 
@@ -312,9 +315,9 @@ split{
 		}
 	}
 	
-	// cords:  old.xpos >= -3662.0 && current.xpos < -3662.0 && current.ypos >= 850.0  && 
+	// cords:  old.xpos >= -3662.0 && current.xpos < -3662.0 && current.ypos >= 850.0 
 	if(settings["miss1_chap_1"] && current.bsp == "/escape1.bsp"){
-		if(current.finish != 0){
+		if((version == "1.42d" && current.finish != 0 ) || (version == "1.45a" && current.finish == 4 )){
 			if(vars.debugMessage) vars.DebugOutput("The timer has stopped (ESCAPE1)");
 			return true;
 		}
@@ -329,17 +332,17 @@ split{
 		
 	}
 	
-	// cords:  current.zpos <= -153.0 && old.xpos <= -850.0 && current.ypos >= 2150.0 &&
+	// cords:  current.zpos <= -153.0 && old.xpos <= -850.0 && current.ypos >= 2150.0
 	if(settings["miss1_chap_3"] && current.bsp == "/sfm.bsp"){
-		if(current.finish != 0){
+		if((version == "1.42d" && current.finish != 0 ) || (version == "1.45a" && current.finish == 4 )){
 			if(vars.debugMessage) vars.DebugOutput("The timer has stopped (SFM)");
 			return true;
 		}
 	}
 	
-	// cords:  current.ypos >= -1450.0 && current.xpos <= -7998.0 &&
+	// cords:  current.ypos >= -1450.0 && current.xpos <= -7998.0
 	if(settings["miss1_chap_4"] && current.bsp == "/norway.bsp"){
-		if(current.finish != 0){
+		if((version == "1.42d" && current.finish != 0 ) || (version == "1.45a" && current.finish == 4 )){
 			if(vars.debugMessage) vars.DebugOutput("The timer has stopped (NORWAY)");
 			return true;
 		}
@@ -347,7 +350,7 @@ split{
 	
 	// cords: no ( trigger is diagonally )
 	if(settings["miss1_chap_5"] && current.bsp == "/dam.bsp"){
-		if(current.finish != 0){
+		if((version == "1.42d" && current.finish != 0 ) || (version == "1.45a" && current.finish == 4 )){
 			if(vars.debugMessage) vars.DebugOutput("The timer has stopped (DAM)");
 			return true;
 		}
@@ -367,7 +370,7 @@ update{
 	} 
 
 	if(version == "1.45a"){	
-		if(current.client_status != 0 || current.ESC != 0) vars.loadStarted = true;
+		if((current.client_status == 0) || current.ESC != 0) vars.loadStarted = true;
 		else{	
 			if(current.camera_x != 0 ) vars.loadStarted = false;
 		}
