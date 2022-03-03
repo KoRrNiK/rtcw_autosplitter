@@ -106,30 +106,31 @@ init{
 	// Useful for debugViewer
 	// https://docs.microsoft.com/en-us/sysinternals/downloads/debugview
 	
-	vars.debugMessage 	= 	false;
-	
+	vars.debugMessage 	= 	true;
 
 	int idGame = modules.First().ModuleMemorySize;
 	
 	int patch_142d = 14643200;
 	int patch_145a = 19324928;
 	
-
 	switch(idGame){
-		case 14643200:
+		case 14643200:{
 			version 		= 	"1.42d";
 			vars.running 	= 	true;
 			break;
-		case 19324928:
+		}
+		case 19324928:{
 			version 		= 	"1.45a";
 			vars.running 	=	 true;
 			break;
-		default:
+		}
+		default:{
 			if(vars.debugMessage) vars.DebugOutput("Unrecognized game version. Disabling functionality.");
 			version 		= 	"Unknown";
 			vars.running 	= 	false;
 			return false;
 			break;
+		}
 	}
 	
 
@@ -138,8 +139,6 @@ init{
 		vars.DebugOutput("Module size: " + idGame);
 		vars.DebugOutput("Found Patch " + version);
 	}
-
-	if(vars.debugMessage) vars.DebugOutput("Found Patch " + version);
 
 	vars.isTimer 		=	false;
 	vars.firstcs 		= 	true;
@@ -150,11 +149,13 @@ init{
 }
 
 exit{
+	vars.isTimer 		=	false;
 	timer.IsGameTimePaused = true;
 	vars.running 		= 	false;
 }
 
 shutdown{
+	vars.isTimer 		=	false;
 	vars.running 		= 	false;
 }
 
@@ -550,18 +551,7 @@ split{
 		else if(vars.debugMessage) vars.DebugOutput("Map change ignored.");
 	}
 	
-	if (current.bsp == "/end.bsp" && current.cs == 1 && old.cs == 0) {
-		if(vars.firstcs == false) {
-			if(vars.debugMessage) vars.DebugOutput("Second cutscene.");
-			return true;
-		}
-		if(vars.firstcs == true) {
-			vars.firstcs = false;
-			if(vars.debugMessage) vars.DebugOutput("First cutscene.");
-		}
-	}
-	
-	if(settings["cat_chap1"]){
+	if(settings["cat_chap1"] || settings["miss8_chap_1"]){
 		if (current.bsp == "/boss1.bsp" && current.cs == 1 && old.cs == 0) {
 			if(vars.firstcs == false) {
 				if(vars.debugMessage) vars.DebugOutput("Second cutscene.");
@@ -597,18 +587,31 @@ split{
 		}
 	}
 	
-	// cords:  current.xpos >= 1454.0 && old.xpos < 1454.0 && current.xpos <= 1500.0 && old.xpos > 1300.0
-	if(settings["cat_chap4"] && current.bsp == "/boss2.bsp"){
+	if(( settings["cat_chap4"] || settings["miss3_chap_4"] ) && current.bsp == "/boss2.bsp"){
 		if(current.xpos >= 1454.0 && old.xpos < 1454.0 && current.xpos <= 1500.0 && old.xpos > 1300.0){
 			if(vars.debugMessage) vars.DebugOutput("The timer has stopped (BOSS2)");
 			return true;
 		}
 	}
+
+	if (current.bsp == "/end.bsp" && current.cs == 1 && old.cs == 0) {
+		if(vars.firstcs == false) {
+			if(vars.debugMessage) vars.DebugOutput("Second cutscene.");
+			return true;
+		}
+		if(vars.firstcs == true) {
+			vars.firstcs = false;
+			if(vars.debugMessage) vars.DebugOutput("First cutscene.");
+		}
+	}
 	
-	// cords:  old.xpos >= -3662.0 && current.xpos < -3662.0 && current.ypos >= 850.0 
+	/* ================================================================= */
+
+	/* ================================================================= CHAPTER 1 */
+
 	if(settings["miss1_chap_1"] && current.bsp == "/escape1.bsp"){
 		if((version == "1.42d" && current.finish != 0 ) ||
-			(version == "1.45a" && current.finish == 4 && current.stuck != 3 && current.cs == 0 )){
+			(version == "1.45a" && current.finish == 4 && current.cs == 0 && current.stuck != 3 )){
 			if(vars.debugMessage) vars.DebugOutput("The timer has stopped (ESCAPE1)");
 			return true;
 		}
@@ -616,60 +619,7 @@ split{
 
 	if(settings["miss2_chap_1"] && current.bsp == "/escape2.bsp"){
 		if((version == "1.42d" && current.finish != 0 ) ||
-			(version == "1.45a" && current.finish == 4 && current.stuck != 3)){
-			if(vars.debugMessage) vars.DebugOutput("The timer has stopped (ESCAPE2)");
-			return true;
-		}
-	}
-	
-
-	
-	// cords:  current.xpos == -4800.0 && current.ypos == -896.0 && current.zpos == 256.0
-	if (settings["miss1_chap_2"] && current.bsp == "/forest.bsp" && current.cs == 1 && old.cs == 0) {
-		if(vars.firstcs == true){
-			if(vars.debugMessage) vars.DebugOutput("The timer has stopped (FOREST)");
-			return true;
-		}
-	}
-	
-	// cords:  current.zpos <= -153.0 && old23xpos <= -850.0 && current.ypos >= 2150.0
-	if(settings["miss1_chap_3"] && current.bsp == "/sfm.bsp"){
-		if((version == "1.42d" && current.finish != 0 ) ||
-			(version == "1.45a" && current.finish == 4 )){
-			if(vars.debugMessage) vars.DebugOutput("The timer has stopped (SFM)");
-			return true;
-		}
-	}
-	
-	// cords:  current.ypos >= -1450.0 && current.xpos <= -7998.0
-	if(settings["miss1_chap_4"] && current.bsp == "/norway.bsp"){
-		if((version == "1.42d" && current.finish != 0 ) ||
-			(version == "1.45a" && current.finish == 4 )){
-			if(vars.debugMessage) vars.DebugOutput("The timer has stopped (NORWAY)");
-			return true;
-		}
-	}
-	
-	// cords: no ( trigger is diagonally )
-	if(settings["miss1_chap_5"] && current.bsp == "/dam.bsp"){
-		if((version == "1.42d" && current.finish != 0 ) ||
-			(version == "1.45a" && current.finish == 4 && current.zpos >= 5500.0 && current.cs == 0 )){
-			if(vars.debugMessage) vars.DebugOutput("The timer has stopped (DAM)");
-			return true;
-		}
-	}
-	
-	if(settings["miss2_chap_3"] && current.bsp == "/factory.bsp"){
-		if((version == "1.42d" && current.finish != 0 ) ||
-			(version == "1.45a" && current.finish == 4 )){
-			if(vars.debugMessage) vars.DebugOutput("The timer has stopped (FACTORY)");
-			return true;
-		}
-	}
-	
-	if(settings["miss2_chap_1"] && current.bsp == "/escape2.bsp"){
-		if((version == "1.42d" && current.finish != 0 ) ||
-			(version == "1.45a" && current.finish == 4 )){
+			(version == "1.45a" && current.finish == 4 && current.cs == 0 && current.stuck != 3)){
 			if(vars.debugMessage) vars.DebugOutput("The timer has stopped (ESCAPE2)");
 			return true;
 		}
@@ -682,7 +632,7 @@ split{
 			return true;
 		}
 	}
-	
+
 	if(settings["miss4_chap_1"] && current.bsp == "/village1.bsp"){
 		if((version == "1.42d" && current.finish != 0 ) ||
 			(version == "1.45a" && current.finish == 4 && current.cs == 0 && current.stuck != 3)){
@@ -693,7 +643,7 @@ split{
 	
 	if(settings["miss5_chap_1"] && current.bsp == "/crypt1.bsp"){
 		if((version == "1.42d" && current.finish != 0 ) ||
-			(version == "1.45a" && current.finish == 4 )){
+			(version == "1.45a" && current.finish == 4 && current.cs == 0 && current.stuck != 3)){
 			if(vars.debugMessage) vars.DebugOutput("The timer has stopped (CRYPT1)");
 			return true;
 		}
@@ -701,7 +651,7 @@ split{
 	
 	if(settings["miss6_chap_1"] && current.bsp == "/crypt2.bsp"){
 		if((version == "1.42d" && current.finish != 0 ) ||
-			(version == "1.45a" && current.finish == 4 )){
+			(version == "1.45a" && current.finish == 4 && current.cs == 0 && current.stuck != 3)){
 			if(vars.debugMessage) vars.DebugOutput("The timer has stopped (CRYPT2)");
 			return true;
 		}
@@ -709,48 +659,182 @@ split{
 	
 	if(settings["miss7_chap_1"] && current.bsp == "/church.bsp"){
 		if((version == "1.42d" && current.finish != 0 ) ||
-			(version == "1.45a" && current.finish == 4 )){
+			(version == "1.45a" && current.finish == 4 && current.cs == 0 && current.stuck != 3)){
 			if(vars.debugMessage) vars.DebugOutput("The timer has stopped (CHURCH)");
 			return true;
 		}
 	}
 	
-	if(settings["miss8_chap_1"]){
-		if (current.bsp == "/boss1.bsp" && current.cs == 1 && old.cs == 0) {
-			if(vars.firstcs == false) {
-				if(vars.debugMessage) vars.DebugOutput("Second cutscene.");
-				return true;
-			}
-			if(vars.firstcs == true) {
-				vars.firstcs = false;
-				if(vars.debugMessage) vars.DebugOutput("First cutscene.");
-			}
+	// BOSS1 UP /\
+	
+	/* ================================================================= */
+
+	/* ================================================================= CHAPTER 2 */
+
+	if (settings["miss1_chap_2"] && current.bsp == "/forest.bsp" && current.cs == 1 && old.cs == 0) {
+		if(vars.firstcs == true){
+			if(vars.debugMessage) vars.DebugOutput("The timer has stopped (FOREST)");
+			return true;
+		}
+	}
+
+	if(settings["miss2_chap_2"] && current.bsp == "/rocket.bsp"){
+		if((version == "1.42d" && current.finish != 0 ) ||
+			(version == "1.45a" && current.finish == 4 && current.cs == 0 && current.stuck != 3 )){
+			if(vars.debugMessage) vars.DebugOutput("The timer has stopped (ROCKET)");
+			return true;
+		}
+	}
+
+	if(settings["miss3_chap_2"] && current.bsp == "/baseout.bsp"){
+		if((version == "1.42d" && current.finish != 0 ) ||
+			(version == "1.45a" && current.finish == 4 && current.cs == 0 && current.stuck != 3)){
+			if(vars.debugMessage) vars.DebugOutput("The timer has stopped (BASEOUT)");
+			return true;
+		}
+	}
+
+	if(settings["miss4_chap_2"] && current.bsp == "/assault.bsp"){
+		if((version == "1.42d" && current.finish != 0 ) ||
+			(version == "1.45a" && current.finish == 4 && current.cs == 0 && current.stuck != 3)){
+			if(vars.debugMessage) vars.DebugOutput("The timer has stopped (ASSAULT)");
+			return true;
+		}
+	}
+
+	/* =============================================================== */
+
+	if(settings["miss1_chap_3"] && current.bsp == "/sfm.bsp"){
+		if((version == "1.42d" && current.finish != 0 ) ||
+			(version == "1.45a" && current.finish == 4 && current.cs == 0 && current.stuck != 3)){
+			if(vars.debugMessage) vars.DebugOutput("The timer has stopped (SFM)");
+			return true;
+		}
+	}
+
+	if(settings["miss2_chap_3"] && current.bsp == "/factory.bsp"){
+		if((version == "1.42d" && current.finish != 0 ) ||
+			(version == "1.45a" && current.finish == 4 && current.cs == 0 && current.stuck != 3)){
+			if(vars.debugMessage) vars.DebugOutput("The timer has stopped (FACTORY)");
+			return true;
+		}
+	}
+
+	if(settings["miss3_chap_3"] && current.bsp == "/trainyard.bsp"){
+		if((version == "1.42d" && current.finish != 0 ) ||
+			(version == "1.45a" && current.finish == 4 && current.cs == 0 && current.stuck != 3)){
+			if(vars.debugMessage) vars.DebugOutput("The timer has stopped (TRAINYARD)");
+			return true;
+		}
+	}
+
+	if(settings["miss4_chap_3"] && current.bsp == "/swf.bsp"){
+		if((version == "1.42d" && current.finish != 0 ) ||
+			(version == "1.45a" && current.finish == 4 && current.cs == 0 && current.stuck != 3)){
+			if(vars.debugMessage) vars.DebugOutput("The timer has stopped (SWF)");
+			return true;
+		}
+	}
+
+	/* =============================================================== */
+
+	if(settings["miss1_chap_4"] && current.bsp == "/norway.bsp"){
+		if((version == "1.42d" && current.finish != 0 ) ||
+			(version == "1.45a" && current.finish == 4 && current.cs == 0 && current.stuck != 3)){
+			if(vars.debugMessage) vars.DebugOutput("The timer has stopped (NORWAY)");
+			return true;
+		}
+	}
+
+	if(settings["miss2_chap_4"] && current.bsp == "/xlabs.bsp"){
+		if((version == "1.42d" && current.finish != 0 ) ||
+			(version == "1.45a" && current.finish == 4 && current.cs == 0 && current.stuck != 3)){
+			if(vars.debugMessage) vars.DebugOutput("The timer has stopped (XLABS)");
+			return true;
+		}
+	}
+
+	// BOSS2 UP /\
+
+	/* =============================================================== */
+
+	if(settings["miss1_chap_5"] && current.bsp == "/dam.bsp"){
+		if((version == "1.42d" && current.finish != 0 ) ||
+			(version == "1.45a" && current.finish == 4 && current.zpos >= 5500.0 && current.cs == 0 )){
+			if(vars.debugMessage) vars.DebugOutput("The timer has stopped (DAM)");
+			return true;
+		}
+	}
+
+	if(settings["miss2_chap_5"] && current.bsp == "/village2.bsp"){
+		if((version == "1.42d" && current.finish != 0 ) ||
+			(version == "1.45a" && current.finish == 4 && current.cs == 0 && current.stuck != 3)){
+			if(vars.debugMessage) vars.DebugOutput("The timer has stopped (VILLAGE2)");
+			return true;
+		}
+	}
+
+	if(settings["miss3_chap_5"] && current.bsp == "/chateau.bsp"){
+		if((version == "1.42d" && current.finish != 0 ) ||
+			(version == "1.45a" && current.finish == 4  && current.cs == 0 && current.stuck != 3)){
+			if(vars.debugMessage) vars.DebugOutput("The timer has stopped (CHATEAU)");
+			return true;
 		}
 	}
 	
+	if(settings["miss4_chap_5"] && current.bsp == "/dark.bsp"){
+		if((version == "1.42d" && current.finish != 0 ) ||
+			(version == "1.45a" && current.finish == 4 && current.cs == 0 && current.stuck != 3)){
+			if(vars.debugMessage) vars.DebugOutput("The timer has stopped (DARK)");
+			return true;
+		}
+	}
+
+	if(settings["miss5_chap_5"] && current.bsp == "/dig.bsp"){
+		if((version == "1.42d" && current.finish != 0 ) ||
+			(version == "1.45a" && current.finish == 4 && current.cs == 0 && current.stuck != 3)){
+			if(vars.debugMessage) vars.DebugOutput("The timer has stopped (DIG)");
+			return true;
+		}
+	}
 	
+	if(settings["miss6_chap_5"] && current.bsp == "/castle.bsp"){
+		if((version == "1.42d" && current.finish != 0 ) ||
+			(version == "1.45a" && current.finish == 4 && current.cs == 0 && current.stuck != 3)){
+			if(vars.debugMessage) vars.DebugOutput("The timer has stopped (CASTLE)");
+			return true;
+		}
+	}
+
 }
 
 update{
 		
 	if(!vars.running) return;
 	
-	if(version == "1.42d"){
-		if(current.client_status != 8 && current.client_status != 1) vars.loadStarted = true;
-		else{	
-			if(current.camera_x != 0) vars.loadStarted = false;
+	switch(version){
+		case "1.45a": {
+			if((current.client_status == 0) || current.ESC == 2) vars.loadStarted = true;
+			else{	
+				if(current.camera_x != 0) vars.loadStarted = false;
+			}
+			break;
 		}
-	} 
-
-	if(version == "1.45a"){	
-		if((current.client_status == 0) || current.ESC == 2) vars.loadStarted = true;
-		else{	
-			if(current.camera_x != 0) vars.loadStarted = false;
+		case "1.42d":{
+			if(current.client_status != 8 && current.client_status != 1) vars.loadStarted = true;
+			else{	
+				if(current.camera_x != 0) vars.loadStarted = false;
+			}
+			break;
+		}
+		default:{ 
+			return;
+			break;
 		}
 	}
-	
+
 	if(vars.debugMessage){
-			vars.DebugOutput("POSS: X " + current.xpos + " Y " + current.ypos + " Z " + current.zpos + " CS " + current.cs + " F " + current.finish + " CLS " + current.client_status + " S " + current.stuck );
+		vars.DebugOutput("POSS: X " + current.xpos + " Y " + current.ypos + " Z " + current.zpos + " CS " + current.cs + " F " + current.finish + " CLS " + current.client_status + " S " + current.stuck );
 	}
 	
 }
