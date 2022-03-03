@@ -106,7 +106,7 @@ init{
 	// Useful for debugViewer
 	// https://docs.microsoft.com/en-us/sysinternals/downloads/debugview
 	
-	vars.debugMessage 	= 	true;
+	vars.debugMessage 	= 	false;
 
 	int idGame = modules.First().ModuleMemorySize;
 	
