@@ -220,8 +220,8 @@ split{
 
 	bool cordVillage1 = (current.zpos > 4500.0 && current.zpos < 4580.0 && current.xpos > -460.0 && current.xpos < -300.0 ) ? true : false;
 	bool cordTram = (current.xpos < -3850.0 && current.ypos > -1300.0) ? true : false;
-	bool cordDam = (current.zpos >= 5500.0) ? true : false;
 	bool cordBoss2 = (current.xpos >= 1454.0 && old.xpos < 1454.0 && current.xpos <= 1500.0 && old.xpos > 1300.0) ? true : false;
+	bool cordDam = (current.zpos >= 5500.0) ? true : false;
 	bool cordDark = (current.xpos > 3100.0 && current.xpos < 3360.0 && current.zpos < 3230.0 && current.zpos > 2970.0) ? true : false;
 
 	if(current.bsp != old.bsp) {
@@ -290,88 +290,36 @@ split{
 	}
 
 	int listChapters = 0;
+	bool stoppedTimer = false;
 
-	foreach (var maps in vars.mapListChapter1) {
-		listChapters++;
-		if(maps == "boos1") continue;
+	for(int i = 1; i <= 5; i ++){
+		foreach (var maps in ( i == 1 ? vars.mapListChapter1 : i == 2 ? vars.mapListChapter2 : i == 3 ? vars.mapListChapter3 : i == 4 ? vars.mapListChapter4 : vars.mapListChapter5 )) {
+			listChapters++;
 
-		if(settings["miss" + listChapters + "_chap_1"] && current.bsp == "/" + maps + ".bsp"){
-			if((isNew && maps == "tram" && cordTram) ||
-				(isNew && maps == "village1" && cordVillage1) ||
-				isOld || isNew
-			){
-				
-				if(vars.debugMessage) vars.DebugOutput("The timer has stopped (" + maps +")");
-				return true;
+			if(i == 1) if(maps == "boos1") continue;
+			if(i == 4) if(maps == "boss2") continue;
+			if(i == 5) if(maps == "end") continue;
+
+			if(settings["miss" + listChapters + "_chap_"+i] && current.bsp == "/" + maps + ".bsp"){
+
+				if(i == 1 && ((isNew && maps == "tram" && cordTram) || (isNew && maps == "village1" && cordVillage1) || isOld || isNew)) stoppedTimer = true;
+				if(i == 2 && ((maps == "forest" && current.cs == 1 && old.cs == 0 && vars.firstcs == true) || isOld || isNew)) stoppedTimer = true;
+				if((i == 3 || i == 4) && (isOld || isNew)) stoppedTimer = true;
+				if(i == 5 && ((isNew && maps == "dam" && cordDam) || (isNew && maps == "dark" && cordDark) || isOld || isNew)) stoppedTimer = true;
+
+				if(stoppedTimer){
+					if(vars.debugMessage) vars.DebugOutput("The timer has stopped (" + maps +")");
+					return true;
+				}
+
 			}
 		}
+		listChapters = 0;
 	}
-	listChapters = 0;
 
 	// BOSS1 - IN THE FUNCTIONS CHAPTER
-
-	if (settings["miss1_chap_2"] && current.bsp == "/forest.bsp") {
-		if(current.cs == 1 && old.cs == 0){
-			if(vars.firstcs == true){
-				if(vars.debugMessage) vars.DebugOutput("The timer has stopped (FOREST)");
-				return true;
-			}
-		}
-	}
-
-	foreach (var maps in vars.mapListChapter2) {
-		listChapters++;
-		if(maps == "forest") continue;
-
-		if(settings["miss" + listChapters + "_chap_2"] && current.bsp == "/" + maps + ".bsp"){
-			if(isOld || isNew){
-				if(vars.debugMessage) vars.DebugOutput("The timer has stopped (" + maps +")");
-				return true;
-			}
-		}
-	}
-	listChapters = 0;
-
-	foreach (var maps in vars.mapListChapter3) {
-		listChapters++;
-		if(settings["miss" + listChapters + "_chap_3"] && current.bsp == "/" + maps + ".bsp"){
-			if(isOld || isNew){
-				if(vars.debugMessage) vars.DebugOutput("The timer has stopped (" + maps +")");
-				return true;
-			}
-		}
-	}
-	listChapters = 0;
-
-	foreach (var maps in vars.mapListChapter4) {
-		listChapters++;
-		if(maps == "boss2") continue;
-
-		if(settings["miss" + listChapters + "_chap_4"] && current.bsp == "/" + maps + ".bsp"){
-			if(isOld || isNew){
-				if(vars.debugMessage) vars.DebugOutput("The timer has stopped (" + maps +")");
-				return true;
-			}
-		}
-	}
-	listChapters = 0;
-
 	// BOSS2 - IN THE FUNCTIONS CHAPTER
 
-	foreach (var maps in vars.mapListChapter5) {
-		listChapters++;
-		if(maps == "end") continue;
-
-		if(settings["miss" + listChapters + "_chap_5"] && current.bsp == "/" + maps + ".bsp"){
-			if((isNew && maps == "dam" && cordDam) ||
-				(isNew && maps == "dark" && cordDark) ||
-				isOld || isNew
-			){
-				if(vars.debugMessage) vars.DebugOutput("The timer has stopped (" + maps +")");
-				return true;
-			}
-		}
-	}
 }
 
 update{
@@ -393,7 +341,7 @@ update{
 			}
 			break;
 		}
-		default:{ 
+		case "Unknown":{ 
 			return;
 			break;
 		}
