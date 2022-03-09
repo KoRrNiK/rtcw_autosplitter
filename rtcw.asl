@@ -221,7 +221,6 @@ split{
 	bool cordVillage1 = (current.zpos > 4500.0 && current.zpos < 4580.0 && current.xpos > -460.0 && current.xpos < -300.0 ) ? true : false;
 	bool cordTram = (current.xpos < -3850.0 && current.ypos > -1300.0) ? true : false;
 	bool cordBoss2 = (current.xpos >= 1454.0 && old.xpos < 1454.0 && current.xpos <= 1500.0 && old.xpos > 1300.0) ? true : false;
-	bool cordDam = (current.zpos >= 5500.0) ? true : false;
 	bool cordDark = (current.xpos > 3100.0 && current.xpos < 3360.0 && current.zpos < 3230.0 && current.zpos > 2970.0) ? true : false;
 
 	if(current.bsp != old.bsp) {
@@ -305,7 +304,7 @@ split{
 				if(i == 1 && ((isNew && maps == "tram" && cordTram) || (isNew && maps == "village1" && cordVillage1) || isOld || isNew)) stoppedTimer = true;
 				if(i == 2 && ((maps == "forest" && current.cs == 1 && old.cs == 0 && vars.firstcs == true) || isOld || isNew)) stoppedTimer = true;
 				if((i == 3 || i == 4) && (isOld || isNew)) stoppedTimer = true;
-				if(i == 5 && ((isNew && maps == "dam" && cordDam) || (isNew && maps == "dark" && cordDark) || isOld || isNew)) stoppedTimer = true;
+				if(i == 5 && ((isNew && maps == "dark" && cordDark) || isOld || isNew)) stoppedTimer = true;
 
 				if(stoppedTimer){
 					if(vars.debugMessage) vars.DebugOutput("The timer has stopped (" + maps +")");
