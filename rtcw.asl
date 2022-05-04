@@ -18,7 +18,6 @@ state("WolfSP", "1.45a"){
 	
 	int finish			: 		"WolfSP.exe", 		0xDBC164;
 	byte stuck			:		"WolfSP.exe",		0xDCB9E1;
-	
 }
 
 // Patch by Knightmare | he bytes were found by Hoyo & KoRrNiK
@@ -182,7 +181,7 @@ split{
 	bool cordTram = (current.xpos < -3850.0 && current.ypos > -1300.0) ? true : false;
 	bool cordBoss2 = (current.xpos >= 1454.0 && old.xpos < 1454.0 && current.xpos <= 1500.0 && old.xpos > 1300.0) ? true : false;
 	bool cordDark = (current.xpos > 3100.0 && current.xpos < 3360.0 && current.zpos < 3230.0 && current.zpos > 2970.0) ? true : false;
-
+	
 	int listChapters = 0;
 	bool stoppedTimer = false;
 	bool stoppedCutscene = false;
@@ -225,6 +224,8 @@ split{
 	for(int i = 1; i <= 5; i ++){
 		foreach (var maps in ( i == 1 ? vars.mapListChapter1 : i == 2 ? vars.mapListChapter2 : i == 3 ? vars.mapListChapter3 : i == 4 ? vars.mapListChapter4 : vars.mapListChapter5 )) {
 			listChapters++;
+			
+			if(version == "1.45a" && current.finish == 4 && current.stuck != 0 ) continue;
 
 			if(i == 1 && maps == "boss1") continue;
 			if(i == 4 && maps == "boss2") continue;
