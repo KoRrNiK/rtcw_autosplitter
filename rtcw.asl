@@ -20,7 +20,7 @@ state("WolfSP", "1.45a"){
 	byte stuck			:		"WolfSP.exe",		0xDCB9E1;
 }
 
-// Patch by Knightmare | he bytes were found by Hoyo & KoRrNiK
+// Patch by Knightmare | The bytes were found by Hoyo & KoRrNiK
 state("WolfSP", "1.42d"){
 	string16 bsp 		: 		0x13D4, 			0x8;
 	byte cs 			: 		0x26F4, 			0x0;
@@ -181,7 +181,8 @@ split{
 	bool cordTram = (current.xpos < -3850.0 && current.ypos > -1300.0) ? true : false;
 	bool cordBoss2 = (current.xpos >= 1454.0 && old.xpos < 1454.0 && current.xpos <= 1500.0 && old.xpos > 1300.0) ? true : false;
 	bool cordDark = (current.xpos > 3100.0 && current.xpos < 3360.0 && current.zpos < 3230.0 && current.zpos > 2970.0) ? true : false;
-	
+	bool cordxlab = (current.zpos < -2500.0 && current.ypos < 0.0 && current.xpos > -749.0 && current.xpos < -530.0) ? true : false;
+
 	int listChapters = 0;
 	bool stoppedTimer = false;
 	bool stoppedCutscene = false;
@@ -225,8 +226,6 @@ split{
 		foreach (var maps in ( i == 1 ? vars.mapListChapter1 : i == 2 ? vars.mapListChapter2 : i == 3 ? vars.mapListChapter3 : i == 4 ? vars.mapListChapter4 : vars.mapListChapter5 )) {
 			listChapters++;
 			
-			if(version == "1.45a" && current.finish == 4 && current.stuck != 0 ) continue;
-
 			if(i == 1 && maps == "boss1") continue;
 			if(i == 4 && maps == "boss2") continue;
 			if(i == 5 && maps == "end") continue;
@@ -235,7 +234,12 @@ split{
 
 				if(i == 1 && ((isNew && maps == "tram" && cordTram) || (isNew && maps == "village1" && cordVillage1) || isOld || isNew)) stoppedTimer = true;
 				if(i == 2 && ((maps == "forest" && current.cs == 1 && old.cs == 0 && vars.firstcs == true) || isOld || isNew)) stoppedTimer = true;
-				if((i == 3 || i == 4) && (isOld || isNew)) stoppedTimer = true;
+				if(i == 3 && (isOld || isNew)) stoppedTimer = true;
+				if(i == 4){
+					if(maps == "xlabs" && version == "1.45a"){
+						if(current.finish == 4 && current.stuck != 0 && cordxlab) stoppedTimer = true;
+					} else if(isOld || isNew) stoppedTimer = true;
+				}
 				if(i == 5 && ((isNew && maps == "dark" && cordDark) || isOld || isNew)) stoppedTimer = true;
 
 				if(stoppedTimer){
