@@ -181,7 +181,7 @@ split{
 	bool cordTram = (current.xpos < -3850.0 && current.ypos > -1300.0) ? true : false;
 	bool cordBoss2 = (current.xpos >= 1454.0 && old.xpos < 1454.0 && current.xpos <= 1500.0 && old.xpos > 1300.0) ? true : false;
 	bool cordDark = (current.xpos > 3100.0 && current.xpos < 3360.0 && current.zpos < 3230.0 && current.zpos > 2970.0) ? true : false;
-	bool cordxlab = (current.zpos < -2500.0 && current.ypos < 0.0 && current.xpos > -749.0 && current.xpos < -530.0) ? true : false;
+	bool cordxlabs = (current.zpos < -2500.0 && current.ypos < 0.0 && current.xpos > -749.0 && current.xpos < -530.0) ? true : false;
 
 	int listChapters = 0;
 	bool stoppedTimer = false;
@@ -237,7 +237,7 @@ split{
 				if(i == 3 && (isOld || isNew)) stoppedTimer = true;
 				if(i == 4){
 					if(maps == "xlabs" && version == "1.45a"){
-						if(current.finish == 4 && current.stuck != 0 && cordxlab) stoppedTimer = true;
+						if(current.finish == 4 && current.stuck == 0 && cordxlabs) stoppedTimer = true;
 					} else if(isOld || isNew) stoppedTimer = true;
 				}
 				if(i == 5 && ((isNew && maps == "dark" && cordDark) || isOld || isNew)) stoppedTimer = true;
