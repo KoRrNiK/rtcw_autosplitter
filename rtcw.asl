@@ -10,6 +10,8 @@ state("WolfSP", "1.45a"){
 	
 	int client_status	: 		"WolfSP.exe", 		0x613420;
 	byte ESC			:		"WolfSP.exe", 		0xCCAF24; 	// 2 == ESC | 1 == CONSOLE
+	
+	float commandFps	:		"WolfSP.exe",		0x689664;
 
 	float camera_x		: 		"WolfSP.exe", 		0x7A2F9C;
 	float xpos 			: 		"WolfSP.exe", 		0x77B0DC;
@@ -18,6 +20,7 @@ state("WolfSP", "1.45a"){
 	
 	int finish			: 		"WolfSP.exe", 		0xDBC164;
 	byte stuck			:		"WolfSP.exe",		0xDCB9E1;
+
 }
 
 // Patch by Knightmare | The bytes were found by Hoyo & KoRrNiK
@@ -48,7 +51,7 @@ startup {
 	vars.chapterNames = new List<string> { "Ominous Rumors + Dark Secret", "Weapons of Vengeance", "Deadly Designs", "Deathshead's Playground", "Return Engagement + Operation Resurrection" };
 	vars.individualNames1 = new List<string> { "Escape!", "Castle Keep", "Tram Ride", "Village", "Catacombs", "Crypt", "The Defiled Church", "Tomb" };
 	vars.individualNames2 = new List<string> { "Forest Compound", "Rocket Base", "Radar Installation", "Air Base Assault" };
-	vars.individualNames3 = new List<string> { "Kugelstadt", "The Bombed Factory", "Radar Installation", "The Trainyards", "Secret Weapons Facility" };
+	vars.individualNames3 = new List<string> { "Kugelstadt", "The Bombed Factory", "The Trainyards", "Secret Weapons Facility" };
 	vars.individualNames4 = new List<string> { "Ice Station Norway", "X-Labs", "Super Soldier" };
 	vars.individualNames5 = new List<string> { "Bramburg Dam", "Paderborn Village", "Chateau Schufstaffel", "Unhallowed Ground", "The Dig", "Return to Castle Wolfenstein", "Heinrich" };
 
@@ -232,7 +235,11 @@ split{
 
 			if(settings["miss" + listChapters + "_chap_"+i] && current.bsp == "/" + maps + ".bsp"){
 
-				if(i == 1 && ((isNew && maps == "tram" && cordTram) || (isNew && maps == "village1" && cordVillage1) || isOld || isNew)) stoppedTimer = true;
+				if(i == 1){
+					if(maps == "village1" && version == "1.45a"){
+						if(current.finish == 4 && current.stuck == 0 && cordVillage1) stoppedTimer = true;
+					} else if(isOld || isNew || (isNew && maps == "tram" && cordTram)) stoppedTimer = true;
+				}
 				if(i == 2 && ((maps == "forest" && current.cs == 1 && old.cs == 0 && vars.firstcs == true) || isOld || isNew)) stoppedTimer = true;
 				if(i == 3 && (isOld || isNew)) stoppedTimer = true;
 				if(i == 4){
@@ -240,7 +247,11 @@ split{
 						if(current.finish == 4 && current.stuck == 0 && cordxlabs) stoppedTimer = true;
 					} else if(isOld || isNew) stoppedTimer = true;
 				}
-				if(i == 5 && ((isNew && maps == "dark" && cordDark) || isOld || isNew)) stoppedTimer = true;
+				if(i == 5){
+					if((maps == "dam" || (maps == "dark" && cordDark)) && version == "1.45a"){
+						if(current.finish == 4 && current.stuck == 0 && isNew) stoppedTimer = true;
+					} else if(isOld || isNew) stoppedTimer = true;
+				}
 
 				if(stoppedTimer){
 					if(vars.debugMessage) vars.DebugOutput("The timer has stopped (" + maps +")");
@@ -261,6 +272,7 @@ update{
 			else{	
 				if(current.camera_x != 0) vars.loadStarted = false;
 			}
+			refreshRate = current.commandFps;
 			break;
 		}
 		case "1.42d":{
@@ -275,9 +287,11 @@ update{
 			break;
 		}
 	}
+
 	if(vars.debugMessage){
 		vars.DebugOutput("POSS: X " + current.xpos + " Y " + current.ypos + " Z " + current.zpos + " CS " + current.cs + " F " + current.finish + " CLS " + current.client_status + " S " + current.stuck );
 	}
+
 }
 
 isLoading{	 
