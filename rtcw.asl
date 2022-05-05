@@ -179,6 +179,7 @@ split{
 
 	bool isOld = (version == "1.42d" && current.finish != 0) ? true : false;
 	bool isNew = (version == "1.45a" && current.finish == 4 && current.cs == 0 && current.stuck != 3) ? true : false;
+	bool isFS = (current.finish == 4 && current.stuck == 0) ? true : false;
 
 	bool cordVillage1 = (current.zpos > 4500.0 && current.zpos < 4580.0 && current.xpos > -460.0 && current.xpos < -300.0 ) ? true : false;
 	bool cordTram = (current.xpos < -3850.0 && current.ypos > -1300.0) ? true : false;
@@ -237,19 +238,19 @@ split{
 
 				if(i == 1){
 					if(maps == "village1" && version == "1.45a"){
-						if(current.finish == 4 && current.stuck == 0 && cordVillage1) stoppedTimer = true;
+						if(isFS && cordVillage1) stoppedTimer = true;
 					} else if(isOld || isNew || (isNew && maps == "tram" && cordTram)) stoppedTimer = true;
 				}
 				if(i == 2 && ((maps == "forest" && current.cs == 1 && old.cs == 0 && vars.firstcs == true) || isOld || isNew)) stoppedTimer = true;
 				if(i == 3 && (isOld || isNew)) stoppedTimer = true;
 				if(i == 4){
 					if(maps == "xlabs" && version == "1.45a"){
-						if(current.finish == 4 && current.stuck == 0 && cordxlabs) stoppedTimer = true;
+						if(isFS && cordxlabs) stoppedTimer = true;
 					} else if(isOld || isNew) stoppedTimer = true;
 				}
 				if(i == 5){
 					if((maps == "dam" || (maps == "dark" && cordDark)) && version == "1.45a"){
-						if(current.finish == 4 && current.stuck == 0 && isNew) stoppedTimer = true;
+						if(isFS && isNew) stoppedTimer = true;
 					} else if(isOld || isNew) stoppedTimer = true;
 				}
 
