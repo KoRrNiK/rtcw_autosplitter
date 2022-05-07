@@ -22,10 +22,6 @@ state("WolfSP", "1.45a"){
 
 	// LEVELS CHECKER POINTER |
 
-	int boss2_oneDoor	: 		"qagamex86.dll", 		0x68F254;
-	int boss2_twoDoor	: 		"qagamex86.dll", 		0x219C28;	
-	int boss2_threeDoor	: 		"qagamex86.dll", 		0x1DAB80;	
-	
 	int escape2_1		: 		"qagamex86.dll", 		0x2518E4;	
 	int escape2_2		: 		"qagamex86.dll", 		0x1C4664;	
 	int crypt1_1		: 		"qagamex86.dll", 		0x230140;	
@@ -35,7 +31,7 @@ state("WolfSP", "1.45a"){
 	int church_1		: 		"qagamex86.dll", 		0x63BCC4;	
 	int church_2		: 		"qagamex86.dll", 		0x212520;	
 	int boss1_1			: 		"qagamex86.dll", 		0x63BCC4;
-	int forset_1		: 		"qagamex86.dll", 		0x1D7054;
+	int forest_1		: 		"qagamex86.dll", 		0x1D7054;
 	int forest_2		: 		"qagamex86.dll", 		0x1C0BF8;
 	int rocket_1		:		"qagamex86.dll", 		0x1F4C74;
 	int rocket_2		:		"qagamex86.dll", 		0x757A74;
@@ -383,6 +379,7 @@ split{
 			if(!vars.checker_end){
 				if(current.boss1_1 == 1 && !vars.checker_1){
 					vars.checker_1 = true;
+					vars.checker_end = true;
 					checker_yes = true;
 				}
 			}
@@ -390,11 +387,12 @@ split{
 		} else if(current.bsp == "/forest.bsp"){
 
 			if(!vars.checker_end){
-				if(current.forset_1 == 1 && !vars.checker_1){
+				if(current.forest_1 == 1 && !vars.checker_1){
 					vars.checker_1 = true;
 					checker_yes = true;
 				} else if(current.forest_2 == 1 && !vars.checker_2 && vars.checker_1){
 					vars.checker_2 = true;
+					vars.checker_end = true;
 					checker_yes = true;
 				}
 			}
