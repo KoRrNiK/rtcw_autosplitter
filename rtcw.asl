@@ -10,8 +10,6 @@ state("WolfSP", "1.45a"){
 	
 	int client_status	: 		"WolfSP.exe", 		0x613420;
 	byte ESC			:		"WolfSP.exe", 		0xCCAF24; 	// 2 == ESC | 1 == CONSOLE
-	
-	float commandFps	:		"WolfSP.exe",		0x689664;
 
 	float camera_x		: 		"WolfSP.exe", 		0x7A2F9C;
 	float xpos 			: 		"WolfSP.exe", 		0x77B0DC;
@@ -20,6 +18,31 @@ state("WolfSP", "1.45a"){
 	
 	int finish			: 		"WolfSP.exe", 		0xDBC164;
 	byte stuck			:		"WolfSP.exe",		0xDCB9E1;
+
+
+	// LEVELS CHECKER POINTER |
+
+	int boss2_oneDoor	: 		"qagamex86.dll", 		0x68F254;
+	int boss2_twoDoor	: 		"qagamex86.dll", 		0x219C28;	
+	int boss2_threeDoor	: 		"qagamex86.dll", 		0x1DAB80;	
+	
+	int escape2_1		: 		"qagamex86.dll", 		0x2518E4;	
+	int escape2_2		: 		"qagamex86.dll", 		0x1C4664;	
+	int crypt1_1		: 		"qagamex86.dll", 		0x230140;	
+	int crypt1_2		: 		"qagamex86.dll", 		0x5F1604;		
+	int crypt2_1		: 		"qagamex86.dll", 		0x69FF14;	
+	int crypt2_2		: 		"qagamex86.dll", 		0x6A682C;	
+	int church_1		: 		"qagamex86.dll", 		0x63BCC4;	
+	int church_2		: 		"qagamex86.dll", 		0x212520;	
+	int boss1_1			: 		"qagamex86.dll", 		0x63BCC4;
+	int forset_1		: 		"qagamex86.dll", 		0x1D7054;
+	int forest_2		: 		"qagamex86.dll", 		0x1C0BF8;
+	int rocket_1		:		"qagamex86.dll", 		0x1F4C74;
+	int rocket_2		:		"qagamex86.dll", 		0x757A74;
+	int rocket_3		:		"qagamex86.dll", 		0x28D124;
+	int baseout_3		:		"qagamex86.dll", 		0x63BCC4;
+	int assault_1		:		"qagamex86.dll",		0x1CBA5C;
+	int assault_2		:		"qagamex86.dll",		0x63DB90;
 
 }
 
@@ -57,6 +80,8 @@ startup {
 
 	// Full Game
 	settings.Add("cat_all", 			true, 		"Full game");
+	settings.Add("cat_all_new", 		true, 		"Full Game ( Segments )");
+
 	
 	// Only chapter
 	settings.Add("chaptersOnly", 		false, 		"Chapters");
@@ -74,21 +99,27 @@ startup {
 		}
 		i_chap = 0;
 	}
-	
+
 	// DEBUG MESSAGE
 	Action<string> DebugOutput = (text) => {
 		print("[RTCW Autosplitter] " + text);
 	};
 	vars.DebugOutput = DebugOutput;
 
-	refreshRate = 84;
+	vars.checker_1 = false;
+	vars.checker_2 = false;
+	vars.checker_3 = false;
+	vars.checker_4 = false;
+	vars.checker_5 = false;
+	vars.checker_6 = false;
+	vars.checker_end = false;
 }
 
 init{
 	// Useful for debugViewer
 	// https://docs.microsoft.com/en-us/sysinternals/downloads/debugview
 	
-	vars.debugMessage 	= 	false;
+	vars.debugMessage 	= 	true;
 
 	int idGame = modules.First().ModuleMemorySize;
 	
@@ -139,15 +170,27 @@ start{
 	for(int i = 1; i <= 5; i ++){
 		foreach (var maps in ( i == 1 ? vars.mapListChapter1 : i == 2 ? vars.mapListChapter2 : i == 3 ? vars.mapListChapter3 : i == 4 ? vars.mapListChapter4 : vars.mapListChapter5 )) {
 			if(settings["miss" + (listChapters+1) + "_chap_"+ i ]) vars.bsp_list.Add("/" + maps + ".bsp");
-			if(settings["cat_all"] || settings["cat_chap"+ i ]) vars.bsp_list.Add("/" + maps + ".bsp");
+			if(settings["cat_all"] || settings["cat_all_new"] || settings["cat_chap"+ i ]) vars.bsp_list.Add("/" + maps + ".bsp");
 			listChapters++;
 		}
 		listChapters = 0;
 	}
+	
 
-	if (settings["cat_all"] && current.bsp == "/cutscene1.bsp" && current.cs == 1 && old.cs == 0) {
+	if ((settings["cat_all"] || (settings["cat_all_new"] && version == "1.45a") ) && current.bsp == "/cutscene1.bsp" && current.cs == 1 && old.cs == 0) {
 		if(vars.debugMessage) vars.DebugOutput("Timer started");
 		vars.firstcs = true;
+
+		if(settings["cat_all_new"] && version == "1.45a"){
+			vars.checker_1 = false;
+			vars.checker_2 = false;
+			vars.checker_3 = false;
+			vars.checker_4 = false;
+			vars.checker_5 = false;
+			vars.checker_6 = false;
+			vars.checker_end = false;
+		}
+
 		vars.visited.Clear();
 		vars.visited.Add("/cutscene1.bsp");
 		vars.visited.Add("/escape1.bsp");
@@ -190,16 +233,239 @@ split{
 	int listChapters = 0;
 	bool stoppedTimer = false;
 	bool stoppedCutscene = false;
+	
+	bool checker_yes = false;
 
-	if(current.bsp != old.bsp) {
-		if(vars.debugMessage) vars.DebugOutput("Map changed to " + current.bsp);
-		if(vars.bsp_list.Contains(current.bsp) && !vars.visited.Contains(current.bsp)){
-			if(vars.debugMessage) vars.DebugOutput("Map change valid.");
-			vars.visited.Add(current.bsp);
-			vars.firstcs = true;
+	if(settings["cat_all_new"] && version == "1.45a"){
+
+		if(current.bsp != old.bsp) {
+			if(vars.bsp_list.Contains(current.bsp) && !vars.visited.Contains(current.bsp) && vars.checker_end){
+				if(vars.debugMessage) vars.DebugOutput("Map changed to " + current.bsp);
+				vars.checker_end = false;
+				vars.checker_1 = false;
+				vars.checker_2 = false;
+				vars.checker_3 = false;
+				vars.checker_4 = false;
+				vars.checker_5 = false;
+				vars.checker_6 = false;
+				vars.visited.Add(current.bsp);
+				checker_yes = true;
+				vars.firstcs = true;
+				if(vars.debugMessage) vars.DebugOutput("Map change valid.");
+			} else if(vars.debugMessage) vars.DebugOutput("Map change ignored.");
+		}
+		
+		if(current.bsp == "/cutscene1.bsp" || current.bsp == "/escape1.bsp"){
+			
+			if(!vars.checker_end){
+				bool __cordEscape1_jail = (current.xpos < -330.0 && current.zpos >= 716.0 && current.zpos <= 787.0) ? true : false;
+				bool __cordEscape1_tower = (current.xpos > -1000.0 && current.xpos < -990.0 && current.zpos >= 1330.0 && current.zpos <= 1357.0 && current.ypos > 200.0 && current.ypos < 300.0) ? true : false;
+				bool __cordEscape1_floor = (current.xpos < -1615.0 && current.xpos > -1815.0 && current.ypos < 350.0 && current.ypos > 300.0 && current.zpos > 240.0 && current.zpos < 480.0) ? true : false;
+				
+				if(__cordEscape1_jail && !vars.checker_1){
+					vars.checker_1 = true;
+					checker_yes = true;
+				} else if(__cordEscape1_tower && !vars.checker_2 && vars.checker_1){
+					vars.checker_2 = true;
+					checker_yes = true;
+				} else if(__cordEscape1_floor && !vars.checker_3 && vars.checker_2 && vars.checker_1){
+					vars.checker_3 = true;
+					vars.checker_end = true;
+					checker_yes = true;
+				}
+				
+			}
+		} else if(current.bsp == "/escape2.bsp" ){
+
+			if(!vars.checker_end){
+				
+				bool __cordEscape2_gate = (current.xpos >= 735.0 && current.ypos >= 165.0 && current.ypos <= 250.0 && current.zpos <= 861.0 && current.zpos >= 802.0 ) ? true : false;
+				
+				if(current.escape2_1 == 1 && !vars.checker_1){
+					vars.checker_1 = true;
+					checker_yes = true;
+				} else if(current.escape2_2 == 1 && !vars.checker_2 && vars.checker_1){
+					vars.checker_2 = true;
+					checker_yes = true;
+				} else if(__cordEscape2_gate && !vars.checker_3 && vars.checker_2 && vars.checker_1){
+					vars.checker_3 = true;
+					vars.checker_end = true;
+					checker_yes = true;
+				} 
+				
+			}
+		} else if(current.bsp == "/tram.bsp"){
+
+			if(!vars.checker_end){
+
+				bool __cordTram_door = (current.xpos >= 3712.0 && current.zpos >= 146.0 && current.zpos <= 173.0 && current.ypos <= 1050.0 && current.ypos >= 1000.0) ? true : false;
+				bool __cordTram_tunel = (current.xpos <= -3058.0 && current.xpos >= -3085.0 && current.zpos <= -320.0 && current.ypos >= -400.0 && current.ypos <= -255.0) ? true : false;
+				
+				if(__cordTram_door && !vars.checker_1){
+					vars.checker_1 = true;
+					checker_yes = true;
+				} else if(__cordTram_tunel && !vars.checker_2 && vars.checker_1){
+					vars.checker_2 = true;
+					vars.checker_end = true;
+					checker_yes = true;
+				}
+			}
+
+		} else if(current.bsp == "/village1.bsp"){
+
+			if(!vars.checker_end){
+
+				bool __cordVillage1_hatch = (current.zpos <= -1150.0 && current.zpos >= -1264.0 && current.xpos >= -2677.0 && current.xpos <= 2602.0 && current.ypos <= -314.0 && current.ypos >= -315.0) ? true : false;
+				bool __cordVillage1_door = (current.zpos >= 1780.0 && current.zpos <= 1790.0 && current.xpos >= -1037.0 && current.xpos <= 1010.0 && current.ypos <= 50.0 && current.ypos >= -40.0) ? true : false;
+
+				if(__cordVillage1_hatch && !vars.checker_1){
+					vars.checker_1 = true;
+					checker_yes = true;
+				} else if(__cordVillage1_door && !vars.checker_2 && vars.checker_1){
+					vars.checker_2 = true;
+					vars.checker_end = true;
+					checker_yes = true;
+				}
+				
+			}
+
+		} else if(current.bsp == "/crypt1.bsp"){
+
+			if(!vars.checker_end){
+
+				if(current.crypt1_1 == 1 && !vars.checker_1){
+					vars.checker_1 = true;
+					checker_yes = true;
+				} else if(current.crypt1_2 == 1 && !vars.checker_2 && vars.checker_1){
+					vars.checker_2 = true;
+					vars.checker_end = true;
+					checker_yes = true;
+				}
+			}
+
+		} else if(current.bsp == "/crypt2.bsp"){
+
+			if(!vars.checker_end){
+
+				if(current.crypt2_1 == 1 && !vars.checker_1){
+					vars.checker_1 = true;
+					checker_yes = true;
+				} else if(current.crypt2_2 > 0 && !vars.checker_2 && vars.checker_1){
+					vars.checker_2 = true;
+					vars.checker_end = true;
+					checker_yes = true;
+				} 
+				
+			}
+
+		} else if(current.bsp == "/church.bsp"){
+
+			if(!vars.checker_end){
+
+				bool __cordChurch_gate = (current.xpos >= 700.0 && current.xpos <= 710.0 && current.zpos <= 733.0 && current.zpos >= 674.0 && current.ypos >= 600.0 && current.ypos <= 700.0) ? true : false;
+
+				if(current.church_1 == 1 && !vars.checker_1){
+					vars.checker_1 = true;
+					checker_yes = true;
+				} else if(current.church_2 == 1 && !vars.checker_2 && vars.checker_1){
+					vars.checker_2 = true;
+					checker_yes = true;
+				} else if(__cordChurch_gate && !vars.checker_3 && vars.checker_2 && vars.checker_1){
+					vars.checker_3 = true;
+					vars.checker_end = true;
+					checker_yes = true;
+				} 
+				
+			}
+
+		} else if(current.bsp == "/boss1.bsp"){
+
+			if(!vars.checker_end){
+				if(current.boss1_1 == 1 && !vars.checker_1){
+					vars.checker_1 = true;
+					checker_yes = true;
+				}
+			}
+
+		} else if(current.bsp == "/forest.bsp"){
+
+			if(!vars.checker_end){
+				if(current.forset_1 == 1 && !vars.checker_1){
+					vars.checker_1 = true;
+					checker_yes = true;
+				} else if(current.forest_2 == 1 && !vars.checker_2 && vars.checker_1){
+					vars.checker_2 = true;
+					checker_yes = true;
+				}
+			}
+			
+		} else if(current.bsp == "/rocket.bsp"){
+
+			bool __cordRocket_elevator = (current.xpos >= 1410.0 && current.ypos <= -250.0 && current.ypos >= -350.0 && current.zpos >= 125.0 && current.zpos <= 240.0) ? true : false;
+
+			if(__cordRocket_elevator && !vars.checker_1){
+				vars.checker_1 = true;
+				checker_yes = true;
+			} else if(current.rocket_1 > 0 && !vars.checker_2 && vars.checker_1){
+				vars.checker_2 = true;
+				checker_yes = true;
+			} else if(current.rocket_2 == 1 && !vars.checker_3 && vars.checker_2 && vars.checker_1){
+				vars.checker_3 = true;
+				checker_yes = true;
+			} else if(current.rocket_3 == 1 && !vars.checker_4 && vars.checker_3 && vars.checker_2 && vars.checker_1){
+				vars.checker_4 = true;
+				vars.checker_end = true;
+				checker_yes = true;
+			}
+			
+		} else if(current.bsp == "/baseout.bsp"){
+
+			bool __cordBaseout_stairs = (current.xpos < 850.0 && current.xpos >= 400.0 && current.zpos <= 845.0 && current.zpos >= 466.0) ? true : false;
+
+			if(!vars.checker_end){
+				if(__cordBaseout_stairs && !vars.checker_1){
+					vars.checker_1 = true;
+					checker_yes = true;
+				} else if(current.baseout_3 == 1 && !vars.checker_2 && vars.checker_1){
+					vars.checker_2 = true;
+					vars.checker_end = true;
+					checker_yes = true;
+				}
+			}
+		} else if(current.bsp == "/assault.bsp"){
+
+			bool __cordAssault_glassdoor = (current.xpos <= -4466.0 && current.xpos >= -4493.0 && current.zpos >= 4600.0 && current.ypos >= 640.0 && current.ypos <= 720.0) ? true : false;
+
+			if(current.assault_1 == 1 && !vars.checker_1){
+				vars.checker_1 = true;
+				checker_yes = true;
+			} else if(current.assault_2 == 1 && !vars.checker_2 && vars.checker_1){
+				vars.checker_2 = true;
+				checker_yes = true;
+			} else if(__cordAssault_glassdoor && !vars.checker_3 && vars.checker_2 && vars.checker_1){
+				vars.checker_3 = true;
+				vars.checker_end = true;
+				checker_yes = true;
+			} 
+			
+		}
+		
+		if(checker_yes){
+			checker_yes = false;
 			return true;
 		}
-		else if(vars.debugMessage) vars.DebugOutput("Map change ignored.");
+
+	} else {
+		if(current.bsp != old.bsp) {
+			if(vars.debugMessage) vars.DebugOutput("Map changed to " + current.bsp);
+			if(vars.bsp_list.Contains(current.bsp) && !vars.visited.Contains(current.bsp)){
+				if(vars.debugMessage) vars.DebugOutput("Map change valid.");
+				vars.visited.Add(current.bsp);
+				vars.firstcs = true;
+				return true;
+			}
+			else if(vars.debugMessage) vars.DebugOutput("Map change ignored.");
+		}
 	}
 
 	for(int i = 1; i <= 5; i ++){
@@ -273,7 +539,6 @@ update{
 			else{	
 				if(current.camera_x != 0) vars.loadStarted = false;
 			}
-			refreshRate = current.commandFps;
 			break;
 		}
 		case "1.42d":{
