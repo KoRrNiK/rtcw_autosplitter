@@ -190,7 +190,6 @@ start{
 	if ((settings["cat_all"] || (settings["cat_all_new"] && version == "1.45a") ) && current.bsp == "/cutscene1.bsp" && current.cs == 1 && old.cs == 0) {
 		if(vars.debugMessage) vars.DebugOutput("Timer started");
 		vars.firstcs = true;
-
 		if(settings["cat_all_new"] && version == "1.45a"){
 			vars.checker_1 = false;
 			vars.checker_2 = false;
@@ -200,7 +199,6 @@ start{
 			vars.checker_6 = false;
 			vars.checker_end = false;
 		}
-
 		vars.visited.Clear();
 		vars.visited.Add("/cutscene1.bsp");
 		vars.visited.Add("/escape1.bsp");
@@ -271,7 +269,6 @@ split{
 				bool __cordEscape1_jail = (current.xpos < -330.0 && current.zpos >= 716.0 && current.zpos <= 787.0) ? true : false;
 				bool __cordEscape1_tower = (current.xpos > -1000.0 && current.xpos < -990.0 && current.zpos >= 1330.0 && current.zpos <= 1357.0 && current.ypos > 200.0 && current.ypos < 300.0) ? true : false;
 				bool __cordEscape1_floor = (current.xpos < -1615.0 && current.xpos > -1815.0 && current.ypos < 350.0 && current.ypos > 300.0 && current.zpos > 240.0 && current.zpos < 480.0) ? true : false;
-				
 				if(__cordEscape1_jail && !vars.checker_1){
 					vars.checker_1 = true;
 					checker_yes = true;
@@ -283,14 +280,11 @@ split{
 					vars.checker_end = true;
 					checker_yes = true;
 				}
-				
 			}
 		} else if(current.bsp == "/escape2.bsp" ){
 
 			if(!vars.checker_end){
-				
 				bool __cordEscape2_gate = (current.xpos >= 735.0 && current.ypos >= 165.0 && current.ypos <= 250.0 && current.zpos <= 861.0 && current.zpos >= 802.0 ) ? true : false;
-				
 				if(current.escape2_1 == 1 && !vars.checker_1){
 					vars.checker_1 = true;
 					checker_yes = true;
@@ -302,15 +296,12 @@ split{
 					vars.checker_end = true;
 					checker_yes = true;
 				} 
-				
 			}
 		} else if(current.bsp == "/tram.bsp"){
 
 			if(!vars.checker_end){
-
 				bool __cordTram_door = (current.xpos >= 3712.0 && current.zpos >= 146.0 && current.zpos <= 173.0 && current.ypos <= 1050.0 && current.ypos >= 1000.0) ? true : false;
 				bool __cordTram_tunel = (current.xpos <= -3058.0 && current.xpos >= -3085.0 && current.zpos <= -320.0 && current.ypos >= -400.0 && current.ypos <= -255.0) ? true : false;
-				
 				if(__cordTram_door && !vars.checker_1){
 					vars.checker_1 = true;
 					checker_yes = true;
@@ -324,10 +315,8 @@ split{
 		} else if(current.bsp == "/village1.bsp"){
 
 			if(!vars.checker_end){
-
 				bool __cordVillage1_hatch = (current.zpos <= -1000.0 && current.zpos >= -1300.0 && current.xpos >= -2700.0 && current.xpos <= 2500.0 && current.ypos <= -314.0 && current.ypos >= -400.0) ? true : false;
 				bool __cordVillage1_door = (current.zpos >= 1780.0 && current.zpos <= 1790.0 && current.xpos >= -1037.0 && current.xpos <= 1010.0 && current.ypos <= 50.0 && current.ypos >= -40.0) ? true : false;
-
 				if(__cordVillage1_hatch && !vars.checker_1){
 					vars.checker_1 = true;
 					checker_yes = true;
@@ -336,13 +325,11 @@ split{
 					vars.checker_end = true;
 					checker_yes = true;
 				}
-				
 			}
 
 		} else if(current.bsp == "/crypt1.bsp"){
 
 			if(!vars.checker_end){
-
 				if(current.crypt1_1 == 1 && !vars.checker_1){
 					vars.checker_1 = true;
 					checker_yes = true;
@@ -356,7 +343,6 @@ split{
 		} else if(current.bsp == "/crypt2.bsp"){
 
 			if(!vars.checker_end){
-
 				if(current.crypt2_1 == 1 && !vars.checker_1){
 					vars.checker_1 = true;
 					checker_yes = true;
@@ -365,15 +351,12 @@ split{
 					vars.checker_end = true;
 					checker_yes = true;
 				} 
-				
 			}
 
 		} else if(current.bsp == "/church.bsp"){
 
 			if(!vars.checker_end){
-
 				bool __cordChurch_gate = (current.xpos >= 700.0 && current.xpos <= 710.0 && current.zpos <= 733.0 && current.zpos >= 674.0 && current.ypos >= 600.0 && current.ypos <= 700.0) ? true : false;
-
 				if(current.church_1 == 1 && !vars.checker_1){
 					vars.checker_1 = true;
 					checker_yes = true;
@@ -385,7 +368,6 @@ split{
 					vars.checker_end = true;
 					checker_yes = true;
 				} 
-				
 			}
 
 		} else if(current.bsp == "/boss1.bsp"){
@@ -413,28 +395,28 @@ split{
 			
 		} else if(current.bsp == "/rocket.bsp"){
 
-			bool __cordRocket_elevator = (current.xpos >= 1410.0 && current.ypos <= -250.0 && current.ypos >= -350.0 && current.zpos >= 125.0 && current.zpos <= 240.0) ? true : false;
-
-			if(__cordRocket_elevator && !vars.checker_1){
-				vars.checker_1 = true;
-				checker_yes = true;
-			} else if(current.rocket_1 > 0 && !vars.checker_2 && vars.checker_1){
-				vars.checker_2 = true;
-				checker_yes = true;
-			} else if(current.rocket_2 == 1 && !vars.checker_3 && vars.checker_2 && vars.checker_1){
-				vars.checker_3 = true;
-				checker_yes = true;
-			} else if(current.rocket_3 == 1 && !vars.checker_4 && vars.checker_3 && vars.checker_2 && vars.checker_1){
-				vars.checker_4 = true;
-				vars.checker_end = true;
-				checker_yes = true;
+			if(!vars.checker_end){
+				bool __cordRocket_elevator = (current.xpos >= 1410.0 && current.ypos <= -250.0 && current.ypos >= -350.0 && current.zpos >= 125.0 && current.zpos <= 240.0) ? true : false;
+				if(__cordRocket_elevator && !vars.checker_1){
+					vars.checker_1 = true;
+					checker_yes = true;
+				} else if(current.rocket_1 > 0 && !vars.checker_2 && vars.checker_1){
+					vars.checker_2 = true;
+					checker_yes = true;
+				} else if(current.rocket_2 == 1 && !vars.checker_3 && vars.checker_2 && vars.checker_1){
+					vars.checker_3 = true;
+					checker_yes = true;
+				} else if(current.rocket_3 == 1 && !vars.checker_4 && vars.checker_3 && vars.checker_2 && vars.checker_1){
+					vars.checker_4 = true;
+					vars.checker_end = true;
+					checker_yes = true;
+				}
 			}
 			
 		} else if(current.bsp == "/baseout.bsp"){
-
-			bool __cordBaseout_stairs = (current.xpos < 850.0 && current.xpos >= 400.0 && current.zpos <= 845.0 && current.zpos >= 466.0) ? true : false;
-
+			
 			if(!vars.checker_end){
+				bool __cordBaseout_stairs = (current.xpos < 850.0 && current.xpos >= 400.0 && current.zpos <= 845.0 && current.zpos >= 466.0) ? true : false;
 				if(__cordBaseout_stairs && !vars.checker_1){
 					vars.checker_1 = true;
 					checker_yes = true;
@@ -444,199 +426,232 @@ split{
 					checker_yes = true;
 				}
 			}
+
 		} else if(current.bsp == "/assault.bsp"){
-
-			bool __cordAssault_glassdoor = (current.xpos <= -4466.0 && current.xpos >= -4493.0 && current.zpos >= 4600.0 && current.ypos >= 640.0 && current.ypos <= 720.0) ? true : false;
-
-			if(current.assault_1 == 1 && !vars.checker_1){
-				vars.checker_1 = true;
-				checker_yes = true;
-			} else if(current.assault_2 == 1 && !vars.checker_2 && vars.checker_1){
-				vars.checker_2 = true;
-				checker_yes = true;
-			} else if(__cordAssault_glassdoor && !vars.checker_3 && vars.checker_2 && vars.checker_1){
-				vars.checker_3 = true;
-				vars.checker_end = true;
-				checker_yes = true;
-			} 
+			
+			if(!vars.checker_end){
+				bool __cordAssault_glassdoor = (current.xpos <= -4466.0 && current.xpos >= -4493.0 && current.zpos >= 4600.0 && current.ypos >= 640.0 && current.ypos <= 720.0) ? true : false;
+				if(current.assault_1 == 1 && !vars.checker_1){
+					vars.checker_1 = true;
+					checker_yes = true;
+				} else if(current.assault_2 == 1 && !vars.checker_2 && vars.checker_1){
+					vars.checker_2 = true;
+					checker_yes = true;
+				} else if(__cordAssault_glassdoor && !vars.checker_3 && vars.checker_2 && vars.checker_1){
+					vars.checker_3 = true;
+					vars.checker_end = true;
+					checker_yes = true;
+				} 
+			}
 			
 		} else if(current.bsp == "/sfm.bsp"){
 
-			if(current.sfm_1 == 1 && !vars.checker_1){
-				vars.checker_1 = true;
-				checker_yes = true;
-			} else if(current.sfm_2 == 1 && !vars.checker_2 && vars.checker_1){
-				vars.checker_2 = true;
-				vars.checker_end = true;
-				checker_yes = true;
+			if(!vars.checker_end){
+				if(current.sfm_1 == 1 && !vars.checker_1){
+					vars.checker_1 = true;
+					checker_yes = true;
+				} else if(current.sfm_2 == 1 && !vars.checker_2 && vars.checker_1){
+					vars.checker_2 = true;
+					vars.checker_end = true;
+					checker_yes = true;
+				}
 			}
 			
 		} else if(current.bsp == "/factory.bsp"){
 
-			if(current.factory_1 == 1 && !vars.checker_1){
-				vars.checker_1 = true;
-				vars.checker_end = true;
-				checker_yes = true;
-			} 
+			if(!vars.checker_end){
+				if(current.factory_1 == 1 && !vars.checker_1){
+					vars.checker_1 = true;
+					vars.checker_end = true;
+					checker_yes = true;
+				} 
+			}
 			
 		} else if(current.bsp == "/trainyard.bsp"){
 
-			bool __cordTrainyard_hall = (current.xpos >= 1325.0 && current.zpos <= -1266.0 && current.zpos >= -1421.0 && current.ypos < 0.0 && current.ypos >= -210.0) ? true : false;
+			if(!vars.checker_end){
+				bool __cordTrainyard_hall = (current.xpos >= 1325.0 && current.zpos <= -1266.0 && current.zpos >= -1421.0 && current.ypos < 0.0 && current.ypos >= -210.0) ? true : false;
+				if(__cordTrainyard_hall && !vars.checker_1){
+					vars.checker_1 = true;
+					checker_yes = true;
+				} else if(current.trainyard_1 == 1 && !vars.checker_2 && vars.checker_1){
+					vars.checker_2 = true;
+					checker_yes = true;
+				} else if(current.trainyard_2 == 1 && !vars.checker_3 && vars.checker_2 && vars.checker_1){
+					vars.checker_3 = true;
+					vars.checker_end = true;
+					checker_yes = true;
+				} 
+			}
 
-			if(__cordTrainyard_hall && !vars.checker_1){
-				vars.checker_1 = true;
-				checker_yes = true;
-			} else if(current.trainyard_1 == 1 && !vars.checker_2 && vars.checker_1){
-				vars.checker_2 = true;
-				checker_yes = true;
-			} else if(current.trainyard_2 == 1 && !vars.checker_3 && vars.checker_2 && vars.checker_1){
-				vars.checker_3 = true;
-				vars.checker_end = true;
-				checker_yes = true;
-			} 
 		} else if(current.bsp == "/swf.bsp"){
 
-			bool __cordSwf_Elevator = (current.zpos <= 80.0 && current.xpos >= 2194.0 && current.xpos <= 2285.0 && current.ypos >= 525.0 && current.ypos <= 600.0) ? true : false;
-			bool __cordSwf_Bridge = (current.xpos <= 1260.0 && current.xpos >= 275.0 && current.zpos >= -530.0 && current.ypos >= 528.0 && current.ypos <= 600.0) ? true : false;
-			bool __cordSwf_Ship = (current.zpos >= 914.0 && current.zpos <= 1005.0 && current.xpos <= 1410.0 && current.ypos >= 360.0 && current.ypos <= 450.0) ? true : false;
-
-			if(__cordSwf_Elevator && !vars.checker_1){
-				vars.checker_1 = true;
-				checker_yes = true;
-			} else if(__cordSwf_Bridge && !vars.checker_2 && vars.checker_1){
-				vars.checker_2 = true;
-				checker_yes = true;
-			} else if(__cordSwf_Ship && !vars.checker_3 && vars.checker_2 && vars.checker_1){
-				vars.checker_3 = true;
-				vars.checker_end = true;
-				checker_yes = true;
+			if(!vars.checker_end){
+				bool __cordSwf_Elevator = (current.zpos <= 80.0 && current.xpos >= 2194.0 && current.xpos <= 2285.0 && current.ypos >= 525.0 && current.ypos <= 600.0) ? true : false;
+				bool __cordSwf_Bridge = (current.xpos <= 1260.0 && current.xpos >= 275.0 && current.zpos >= -530.0 && current.ypos >= 528.0 && current.ypos <= 600.0) ? true : false;
+				bool __cordSwf_Ship = (current.zpos >= 914.0 && current.zpos <= 1005.0 && current.xpos <= 1410.0 && current.ypos >= 360.0 && current.ypos <= 450.0) ? true : false;
+				if(__cordSwf_Elevator && !vars.checker_1){
+					vars.checker_1 = true;
+					checker_yes = true;
+				} else if(__cordSwf_Bridge && !vars.checker_2 && vars.checker_1){
+					vars.checker_2 = true;
+					checker_yes = true;
+				} else if(__cordSwf_Ship && !vars.checker_3 && vars.checker_2 && vars.checker_1){
+					vars.checker_3 = true;
+					vars.checker_end = true;
+					checker_yes = true;
+				}
 			}
+			
 		} else if(current.bsp == "/norway.bsp"){
 
-			bool __cordNorway_Gate = (current.zpos >= 1000.0 && current.zpos <= 1140.0 && current.xpos >= 1400.0 && current.ypos >= 440.0 && current.ypos <= 600.0) ? true : false;
-			
-			if(__cordNorway_Gate && !vars.checker_1){
-				vars.checker_1 = true;
-				checker_yes = true;
-			} else if(current.norway_1 == 1 && !vars.checker_2 && vars.checker_1){
-				vars.checker_2 = true;
-				vars.checker_end = true;
-				checker_yes = true;
+			if(!vars.checker_end){
+				bool __cordNorway_Gate = (current.zpos >= 1000.0 && current.zpos <= 1140.0 && current.xpos >= 1400.0 && current.ypos >= 440.0 && current.ypos <= 600.0) ? true : false;
+				if(__cordNorway_Gate && !vars.checker_1){
+					vars.checker_1 = true;
+					checker_yes = true;
+				} else if(current.norway_1 == 1 && !vars.checker_2 && vars.checker_1){
+					vars.checker_2 = true;
+					vars.checker_end = true;
+					checker_yes = true;
+				}
 			}
+
 		} else if(current.bsp == "/xlabs.bsp"){
 
-			if(current.xlabs_1 == 1 && !vars.checker_1){
-				vars.checker_1 = true;
-				vars.checker_end = true;
-				checker_yes = true;
-			} 
+			if(!vars.checker_end){
+				if(current.xlabs_1 == 1 && !vars.checker_1){
+					vars.checker_1 = true;
+					vars.checker_end = true;
+					checker_yes = true;
+				} 
+			}
+
 		} else if(current.bsp == "/boss2.bsp"){
 
-			if(current.boss2_1 == 1 && !vars.checker_1){
-				vars.checker_1 = true;
-				checker_yes = true;
-			} else if(current.boss2_2 >= 10000 && !vars.checker_2 && vars.checker_1){
-				vars.checker_2 = true;
-				vars.checker_end = true;
-				checker_yes = true;
+			if(!vars.checker_end){
+				if(current.boss2_1 == 1 && !vars.checker_1){
+					vars.checker_1 = true;
+					checker_yes = true;
+				} else if(current.boss2_2 >= 10000 && !vars.checker_2 && vars.checker_1){
+					vars.checker_2 = true;
+					vars.checker_end = true;
+					checker_yes = true;
+				}
 			}
+
 		} else if(current.bsp == "/dam.bsp"){
 
-			bool __cordDam_Tunel = (current.xpos >= -1387.0 && current.xpos <= -1362.0 && current.zpos >= 1515.0 && current.zpos <= 1700.0 && current.ypos >= 2690.0 && current.ypos <= 2750.0) ? true : false;
-			bool __cordDam_Door = (current.xpos >= -77.0 && current.xpos <= -50.0 && current.zpos >= 3036.0 && current.zpos <= 3500.0 && current.ypos >= 2660.0 && current.ypos <= 2750.0) ? true : false;
-
-			if(__cordDam_Tunel && !vars.checker_1){
-				vars.checker_1 = true;
-				checker_yes = true;
-			} else if(__cordDam_Door && !vars.checker_2 && vars.checker_1){
-				vars.checker_2 = true;
-				vars.checker_end = true;
-				checker_yes = true;
+			if(!vars.checker_end){
+				bool __cordDam_Tunel = (current.xpos >= -1387.0 && current.xpos <= -1362.0 && current.zpos >= 1515.0 && current.zpos <= 1700.0 && current.ypos >= 2690.0 && current.ypos <= 2750.0) ? true : false;
+				bool __cordDam_Door = (current.xpos >= -77.0 && current.xpos <= -50.0 && current.zpos >= 3036.0 && current.zpos <= 3500.0 && current.ypos >= 2660.0 && current.ypos <= 2750.0) ? true : false;
+				if(__cordDam_Tunel && !vars.checker_1){
+					vars.checker_1 = true;
+					checker_yes = true;
+				} else if(__cordDam_Door && !vars.checker_2 && vars.checker_1){
+					vars.checker_2 = true;
+					vars.checker_end = true;
+					checker_yes = true;
+				}
 			}
+
 		} else if(current.bsp == "/village2.bsp"){
 
-			bool __cordVillage2_balcony = (current.zpos >= -445.0 && current.zpos <= -322.0 && current.xpos >= 1550.0 && current.xpos <= 1710.0 && current.ypos <= -30.0 && current.ypos >= -100.0) ? true : false;
-			
-			if(__cordVillage2_balcony && !vars.checker_1){
-				vars.checker_1 = true;
-				vars.checker_end = true;
-				checker_yes = true;
+			if(!vars.checker_end){
+				bool __cordVillage2_balcony = (current.zpos >= -445.0 && current.zpos <= -322.0 && current.xpos >= 1550.0 && current.xpos <= 1710.0 && current.ypos <= -30.0 && current.ypos >= -100.0) ? true : false;
+				if(__cordVillage2_balcony && !vars.checker_1){
+					vars.checker_1 = true;
+					vars.checker_end = true;
+					checker_yes = true;
+				}
 			}
+
 		} else if(current.bsp == "/chateau.bsp"){
 
-			bool __cordChateau_door = (current.zpos >= 1042.0 && current.zpos <= 1133.0 && current.xpos >= 372.0 && current.xpos <= 400.0 && current.ypos >= 360.0 && current.ypos <= 500.0) ? true : false;
-			
-			if(__cordChateau_door && !vars.checker_1){
-				vars.checker_1 = true;
-				checker_yes = true;
-			} else if(current.chateau_1 == 1 && !vars.checker_2 && vars.checker_1){
-				vars.checker_2 = true;
-				vars.checker_end = true;
-				checker_yes = true;
+			if(!vars.checker_end){
+				bool __cordChateau_door = (current.zpos >= 1042.0 && current.zpos <= 1133.0 && current.xpos >= 372.0 && current.xpos <= 400.0 && current.ypos >= 360.0 && current.ypos <= 500.0) ? true : false;
+				if(__cordChateau_door && !vars.checker_1){
+					vars.checker_1 = true;
+					checker_yes = true;
+				} else if(current.chateau_1 == 1 && !vars.checker_2 && vars.checker_1){
+					vars.checker_2 = true;
+					vars.checker_end = true;
+					checker_yes = true;
+				}
 			}
+
 		} else if(current.bsp == "/dark.bsp"){
 
-
-			if(current.dark_1 == 1 && !vars.checker_1){
-				vars.checker_1 = true;
-				checker_yes = true;
-			} else if(current.dark_1 == 2 && !vars.checker_2 && vars.checker_1){
-				vars.checker_2 = true;
-				vars.checker_end = true;
-				checker_yes = true;
+			if(!vars.checker_end){
+				if(current.dark_1 == 1 && !vars.checker_1){
+					vars.checker_1 = true;
+					checker_yes = true;
+				} else if(current.dark_1 == 2 && !vars.checker_2 && vars.checker_1){
+					vars.checker_2 = true;
+					vars.checker_end = true;
+					checker_yes = true;
+				}
 			}
+
 		} else if(current.bsp == "/dig.bsp"){
 
-			bool __cordDig_drop = (current.zpos >= 300.0 && current.zpos <= 500.0 && current.xpos >= -600.0 && current.xpos <= -400.0 && current.ypos <= -700.0 && current.ypos >= -900.0) ? true : false;
-			bool __cordDig_ladder = (current.zpos >= 250.0 && current.zpos <= 320.0 && current.xpos >= 866.0 && current.xpos <= 870.0 && current.ypos >= -400.0 && current.ypos <= 50.0) ? true : false;
-			
-			if(__cordDig_drop && !vars.checker_1){
-				vars.checker_1 = true;
-				checker_yes = true;
-			} else if(__cordDig_ladder && !vars.checker_2 && vars.checker_1){
-				vars.checker_2 = true;
-				vars.checker_end = true;
-				checker_yes = true;
+			if(!vars.checker_end){
+				bool __cordDig_drop = (current.zpos >= 300.0 && current.zpos <= 500.0 && current.xpos >= -600.0 && current.xpos <= -400.0 && current.ypos <= -700.0 && current.ypos >= -900.0) ? true : false;
+				bool __cordDig_ladder = (current.zpos >= 250.0 && current.zpos <= 320.0 && current.xpos >= 866.0 && current.xpos <= 870.0 && current.ypos >= -400.0 && current.ypos <= 50.0) ? true : false;
+				if(__cordDig_drop && !vars.checker_1){
+					vars.checker_1 = true;
+					checker_yes = true;
+				} else if(__cordDig_ladder && !vars.checker_2 && vars.checker_1){
+					vars.checker_2 = true;
+					vars.checker_end = true;
+					checker_yes = true;
+				}
 			}
-		}  else if(current.bsp == "/dig.bsp"){
 
-			bool __cordDig_drop = (current.zpos >= 300.0 && current.zpos <= 500.0 && current.xpos >= -600.0 && current.xpos <= -400.0 && current.ypos <= -700.0 && current.ypos >= -900.0) ? true : false;
-			bool __cordDig_ladder = (current.zpos >= 250.0 && current.zpos <= 320.0 && current.xpos >= 866.0 && current.xpos <= 870.0 && current.ypos >= -400.0 && current.ypos <= 50.0) ? true : false;
-			
-			if(__cordDig_drop && !vars.checker_1){
-				vars.checker_1 = true;
-				checker_yes = true;
-			} else if(__cordDig_ladder && !vars.checker_2 && vars.checker_1){
-				vars.checker_2 = true;
-				vars.checker_end = true;
-				checker_yes = true;
+		} else if(current.bsp == "/dig.bsp"){
+
+			if(!vars.checker_end){
+				bool __cordDig_drop = (current.zpos >= 300.0 && current.zpos <= 500.0 && current.xpos >= -600.0 && current.xpos <= -400.0 && current.ypos <= -700.0 && current.ypos >= -900.0) ? true : false;
+				bool __cordDig_ladder = (current.zpos >= 250.0 && current.zpos <= 320.0 && current.xpos >= 866.0 && current.xpos <= 870.0 && current.ypos >= -400.0 && current.ypos <= 50.0) ? true : false;
+				if(__cordDig_drop && !vars.checker_1){
+					vars.checker_1 = true;
+					checker_yes = true;
+				} else if(__cordDig_ladder && !vars.checker_2 && vars.checker_1){
+					vars.checker_2 = true;
+					vars.checker_end = true;
+					checker_yes = true;
+				}
 			}
+
 		} else if(current.bsp == "/castle.bsp"){
 
-			if(current.castle_1 == 1 && !vars.checker_1){
-				vars.checker_1 = true;
-				checker_yes = true;
-			} else if(current.castle_2 == 1 && !vars.checker_2 && vars.checker_1){
-				vars.checker_2 = true;
-				checker_yes = true;
-			} else if(current.castle_3 == 1 && !vars.checker_3 && vars.checker_2 && vars.checker_1){
-				vars.checker_3 = true;
-				vars.checker_end = true;
-				checker_yes = true;
+			if(!vars.checker_end){
+				if(current.castle_1 == 1 && !vars.checker_1){
+					vars.checker_1 = true;
+					checker_yes = true;
+				} else if(current.castle_2 == 1 && !vars.checker_2 && vars.checker_1){
+					vars.checker_2 = true;
+					checker_yes = true;
+				} else if(current.castle_3 == 1 && !vars.checker_3 && vars.checker_2 && vars.checker_1){
+					vars.checker_3 = true;
+					vars.checker_end = true;
+					checker_yes = true;
+				}
 			}
 
 		} else if(current.bsp == "/end.bsp"){
 
-			bool __cordEnd_door = (current.xpos >= -499.0 && current.zpos <= -2146.0 && current.zpos >= -2205.0 && current.ypos >= 70.0 && current.ypos <= 150.0) ? true : false;
-
-			if(__cordEnd_door && !vars.checker_1){
-				vars.checker_1 = true;
-				checker_yes = true;
-			} else if(current.cs == 1 && old.cs == 0 && vars.firstcs == true && !vars.checker_2 && vars.checker_1){
-				vars.checker_2 = true;
-				checker_yes = true;
-				vars.checker_end = true;
-				
+			if(!vars.checker_end){
+				bool __cordEnd_door = (current.xpos >= -499.0 && current.zpos <= -2146.0 && current.zpos >= -2205.0 && current.ypos >= 70.0 && current.ypos <= 150.0) ? true : false;
+				if(__cordEnd_door && !vars.checker_1){
+					vars.checker_1 = true;
+					checker_yes = true;
+				} else if(current.cs == 1 && old.cs == 0 && vars.firstcs == true && !vars.checker_2 && vars.checker_1){
+					vars.checker_2 = true;
+					checker_yes = true;
+					vars.checker_end = true;
+					
+				}
 			}
 
 		}
