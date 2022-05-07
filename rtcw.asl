@@ -39,6 +39,15 @@ state("WolfSP", "1.45a"){
 	int baseout_3		:		"qagamex86.dll", 		0x63BCC4;
 	int assault_1		:		"qagamex86.dll",		0x1CBA5C;
 	int assault_2		:		"qagamex86.dll",		0x63DB90;
+	int sfm_1			:		"qagamex86.dll",		0x22C8D4;
+	int sfm_2			:		"qagamex86.dll",		0x6D2600;
+	int factory_1		:		"qagamex86.dll",		0x5F15FC;
+	int trainyard_1		:		"qagamex86.dll",		0x680718;
+	int trainyard_2		:		"qagamex86.dll",		0x66B270;
+	int norway_1		:		"qagamex86.dll",		0x684A1C;
+	int xlabs_1			:		"qagamex86.dll",		0x5F1600;
+	int boss2_1			:		"qagamex86.dll",		0x219C28;
+	int boss2_2			:		"qagamex86.dll",		0x1C8240;
 
 }
 
@@ -446,6 +455,86 @@ split{
 				checker_yes = true;
 			} 
 			
+		} else if(current.bsp == "/sfm.bsp"){
+
+			if(current.sfm_1 == 1 && !vars.checker_1){
+				vars.checker_1 = true;
+				checker_yes = true;
+			} else if(current.sfm_2 == 1 && !vars.checker_2 && vars.checker_1){
+				vars.checker_2 = true;
+				vars.checker_end = true;
+				checker_yes = true;
+			}
+			
+		} else if(current.bsp == "/factory.bsp"){
+
+			if(current.factory_1 == 1 && !vars.checker_1){
+				vars.checker_1 = true;
+				vars.checker_end = true;
+				checker_yes = true;
+			} 
+			
+		} else if(current.bsp == "/trainyard.bsp"){
+
+			bool __cordTrainyard_hall = (current.xpos >= 1325.0 && current.zpos <= -1266.0 && current.zpos >= -1421.0 && current.ypos < 0.0 && current.ypos >= -210.0) ? true : false;
+
+			if(__cordTrainyard_hall && !vars.checker_1){
+				vars.checker_1 = true;
+				checker_yes = true;
+			} else if(current.trainyard_1 == 1 && !vars.checker_2 && vars.checker_1){
+				vars.checker_2 = true;
+				checker_yes = true;
+			} else if(current.trainyard_2 == 1 && !vars.checker_3 && vars.checker_2 && vars.checker_1){
+				vars.checker_3 = true;
+				vars.checker_end = true;
+				checker_yes = true;
+			} 
+		} else if(current.bsp == "/swf.bsp"){
+
+			bool __cordSwf_Elevator = (current.zpos <= 80.0 && current.xpos >= 2194.0 && current.xpos <= 2285.0 && current.ypos >= 525.0 && current.ypos <= 600.0) ? true : false;
+			bool __cordSwf_Bridge = (current.xpos <= 1260.0 && current.xpos >= 275.0 && current.zpos >= -530.0 && current.ypos >= 528.0 && current.ypos <= 600.0) ? true : false;
+			bool __cordSwf_Ship = (current.zpos >= 914.0 && current.zpos <= 1005.0 && current.xpos <= 1410.0 && current.ypos >= 360.0 && current.ypos <= 450.0) ? true : false;
+
+			if(__cordSwf_Elevator && !vars.checker_1){
+				vars.checker_1 = true;
+				checker_yes = true;
+			} else if(__cordSwf_Bridge && !vars.checker_2 && vars.checker_1){
+				vars.checker_2 = true;
+				checker_yes = true;
+			} else if(__cordSwf_Ship && !vars.checker_3 && vars.checker_2 && vars.checker_1){
+				vars.checker_3 = true;
+				vars.checker_end = true;
+				checker_yes = true;
+			}
+		} else if(current.bsp == "/norway.bsp"){
+
+			bool __cordNorway_Gate = (current.zpos >= 1000.0 && current.zpos <= 1140.0 && current.xpos >= 1400.0 && current.ypos >= 440.0 && current.ypos <= 600.0) ? true : false;
+			
+			if(__cordNorway_Gate && !vars.checker_1){
+				vars.checker_1 = true;
+				checker_yes = true;
+			} else if(current.norway_1 == 1 && !vars.checker_2 && vars.checker_1){
+				vars.checker_2 = true;
+				vars.checker_end = true;
+				checker_yes = true;
+			}
+		} else if(current.bsp == "/xlabs.bsp"){
+
+			if(current.xlabs_1 && !vars.checker_1){
+				vars.checker_1 = true;
+				vars.checker_end = true;
+				checker_yes = true;
+			} 
+		} else if(current.bsp == "/boss2.bsp"){
+
+			if(current.boss2_1 == 1 && !vars.checker_1){
+				vars.checker_1 = true;
+				checker_yes = true;
+			} else if(current.boss2_2 == 1 && !vars.checker_2 && vars.checker_1){
+				vars.checker_2 = true;
+				vars.checker_end = true;
+				checker_yes = true;
+			}
 		}
 		
 		if(checker_yes){
