@@ -47,8 +47,13 @@ state("WolfSP", "1.45a"){
 	int norway_1		:		"qagamex86.dll",		0x684A1C;
 	int xlabs_1			:		"qagamex86.dll",		0x5F1600;
 	int boss2_1			:		"qagamex86.dll",		0x219C28;
-	int boss2_2			:		"qagamex86.dll",		0x1C8240;
-
+	ulong boss2_2			:		"qagamex86.dll",		0x5F4C80;
+	int chateau_1		:		"qagamex86.dll",		0x63BCC4;
+	int dark_1			:		"qagamex86.dll",		0x641868;
+	int dark_2			:		"qagamex86.dll",		0x6FA514;
+	int castle_1		:		"qagamex86.dll",		0x6D9544;
+	int castle_2		:		"qagamex86.dll",		0x6B4188;
+	int castle_3		:		"qagamex86.dll",		0x6974CC;
 }
 
 // Patch by Knightmare | The bytes were found by Hoyo & KoRrNiK
@@ -124,7 +129,7 @@ init{
 	// Useful for debugViewer
 	// https://docs.microsoft.com/en-us/sysinternals/downloads/debugview
 	
-	vars.debugMessage 	= 	true;
+	vars.debugMessage 	= 	false;
 
 	int idGame = modules.First().ModuleMemorySize;
 	
@@ -320,7 +325,7 @@ split{
 
 			if(!vars.checker_end){
 
-				bool __cordVillage1_hatch = (current.zpos <= -1150.0 && current.zpos >= -1264.0 && current.xpos >= -2677.0 && current.xpos <= 2602.0 && current.ypos <= -314.0 && current.ypos >= -315.0) ? true : false;
+				bool __cordVillage1_hatch = (current.zpos <= -1000.0 && current.zpos >= -1300.0 && current.xpos >= -2700.0 && current.xpos <= 2500.0 && current.ypos <= -314.0 && current.ypos >= -400.0) ? true : false;
 				bool __cordVillage1_door = (current.zpos >= 1780.0 && current.zpos <= 1790.0 && current.xpos >= -1037.0 && current.xpos <= 1010.0 && current.ypos <= 50.0 && current.ypos >= -40.0) ? true : false;
 
 				if(__cordVillage1_hatch && !vars.checker_1){
@@ -520,7 +525,7 @@ split{
 			}
 		} else if(current.bsp == "/xlabs.bsp"){
 
-			if(current.xlabs_1 && !vars.checker_1){
+			if(current.xlabs_1 == 1 && !vars.checker_1){
 				vars.checker_1 = true;
 				vars.checker_end = true;
 				checker_yes = true;
@@ -530,11 +535,110 @@ split{
 			if(current.boss2_1 == 1 && !vars.checker_1){
 				vars.checker_1 = true;
 				checker_yes = true;
-			} else if(current.boss2_2 == 1 && !vars.checker_2 && vars.checker_1){
+			} else if(current.boss2_2 >= 10000 && !vars.checker_2 && vars.checker_1){
 				vars.checker_2 = true;
 				vars.checker_end = true;
 				checker_yes = true;
 			}
+		} else if(current.bsp == "/dam.bsp"){
+
+			bool __cordDam_Tunel = (current.xpos >= -1387.0 && current.xpos <= -1362.0 && current.zpos >= 1515.0 && current.zpos <= 1700.0 && current.ypos >= 2690.0 && current.ypos <= 2750.0) ? true : false;
+			bool __cordDam_Door = (current.xpos >= -77.0 && current.xpos <= -50.0 && current.zpos >= 3036.0 && current.zpos <= 3500.0 && current.ypos >= 2660.0 && current.ypos <= 2750.0) ? true : false;
+
+			if(__cordDam_Tunel && !vars.checker_1){
+				vars.checker_1 = true;
+				checker_yes = true;
+			} else if(__cordDam_Door && !vars.checker_2 && vars.checker_1){
+				vars.checker_2 = true;
+				vars.checker_end = true;
+				checker_yes = true;
+			}
+		} else if(current.bsp == "/village2.bsp"){
+
+			bool __cordVillage2_balcony = (current.zpos >= -445.0 && current.zpos <= -322.0 && current.xpos >= 1550.0 && current.xpos <= 1710.0 && current.ypos <= -30.0 && current.ypos >= -100.0) ? true : false;
+			
+			if(__cordVillage2_balcony && !vars.checker_1){
+				vars.checker_1 = true;
+				vars.checker_end = true;
+				checker_yes = true;
+			}
+		} else if(current.bsp == "/chateau.bsp"){
+
+			bool __cordChateau_door = (current.zpos >= 1042.0 && current.zpos <= 1133.0 && current.xpos >= 372.0 && current.xpos <= 400.0 && current.ypos >= 360.0 && current.ypos <= 500.0) ? true : false;
+			
+			if(__cordChateau_door && !vars.checker_1){
+				vars.checker_1 = true;
+				checker_yes = true;
+			} else if(current.chateau_1 == 1 && !vars.checker_2 && vars.checker_1){
+				vars.checker_2 = true;
+				vars.checker_end = true;
+				checker_yes = true;
+			}
+		} else if(current.bsp == "/dark.bsp"){
+
+
+			if(current.dark_1 == 1 && !vars.checker_1){
+				vars.checker_1 = true;
+				checker_yes = true;
+			} else if(current.dark_1 == 2 && !vars.checker_2 && vars.checker_1){
+				vars.checker_2 = true;
+				vars.checker_end = true;
+				checker_yes = true;
+			}
+		} else if(current.bsp == "/dig.bsp"){
+
+			bool __cordDig_drop = (current.zpos >= 300.0 && current.zpos <= 500.0 && current.xpos >= -600.0 && current.xpos <= -400.0 && current.ypos <= -700.0 && current.ypos >= -900.0) ? true : false;
+			bool __cordDig_ladder = (current.zpos >= 250.0 && current.zpos <= 320.0 && current.xpos >= 866.0 && current.xpos <= 870.0 && current.ypos >= -400.0 && current.ypos <= 50.0) ? true : false;
+			
+			if(__cordDig_drop && !vars.checker_1){
+				vars.checker_1 = true;
+				checker_yes = true;
+			} else if(__cordDig_ladder && !vars.checker_2 && vars.checker_1){
+				vars.checker_2 = true;
+				vars.checker_end = true;
+				checker_yes = true;
+			}
+		}  else if(current.bsp == "/dig.bsp"){
+
+			bool __cordDig_drop = (current.zpos >= 300.0 && current.zpos <= 500.0 && current.xpos >= -600.0 && current.xpos <= -400.0 && current.ypos <= -700.0 && current.ypos >= -900.0) ? true : false;
+			bool __cordDig_ladder = (current.zpos >= 250.0 && current.zpos <= 320.0 && current.xpos >= 866.0 && current.xpos <= 870.0 && current.ypos >= -400.0 && current.ypos <= 50.0) ? true : false;
+			
+			if(__cordDig_drop && !vars.checker_1){
+				vars.checker_1 = true;
+				checker_yes = true;
+			} else if(__cordDig_ladder && !vars.checker_2 && vars.checker_1){
+				vars.checker_2 = true;
+				vars.checker_end = true;
+				checker_yes = true;
+			}
+		} else if(current.bsp == "/castle.bsp"){
+
+			if(current.castle_1 == 1 && !vars.checker_1){
+				vars.checker_1 = true;
+				checker_yes = true;
+			} else if(current.castle_2 == 1 && !vars.checker_2 && vars.checker_1){
+				vars.checker_2 = true;
+				checker_yes = true;
+			} else if(current.castle_3 == 1 && !vars.checker_3 && vars.checker_2 && vars.checker_1){
+				vars.checker_3 = true;
+				vars.checker_end = true;
+				checker_yes = true;
+			}
+
+		} else if(current.bsp == "/end.bsp"){
+
+			bool __cordEnd_door = (current.xpos >= -499.0 && current.zpos <= -2146.0 && current.zpos >= -2205.0 && current.ypos >= 70.0 && current.ypos <= 150.0) ? true : false;
+
+			if(__cordEnd_door && !vars.checker_1){
+				vars.checker_1 = true;
+				checker_yes = true;
+			} else if(current.cs == 1 && old.cs == 0 && vars.firstcs == true && !vars.checker_2 && vars.checker_1){
+				vars.checker_2 = true;
+				checker_yes = true;
+				vars.checker_end = true;
+				
+			}
+
 		}
 		
 		if(checker_yes){
