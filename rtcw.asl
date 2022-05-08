@@ -19,7 +19,6 @@ state("WolfSP", "1.45a"){
 	int finish			: 		"WolfSP.exe", 		0xDBC164;
 	byte stuck			:		"WolfSP.exe",		0xDCB9E1;
 
-
 	// LEVELS CHECKER POINTER |
 
 	int escape2_1		: 		"qagamex86.dll", 		0x2518E4;	
@@ -47,7 +46,7 @@ state("WolfSP", "1.45a"){
 	int norway_1		:		"qagamex86.dll",		0x684A1C;
 	int xlabs_1			:		"qagamex86.dll",		0x5F1600;
 	int boss2_1			:		"qagamex86.dll",		0x219C28;
-	ulong boss2_2			:		"qagamex86.dll",		0x5F4C80;
+	ulong boss2_2		:		"qagamex86.dll",		0x5F4C80;
 	int chateau_1		:		"qagamex86.dll",		0x63BCC4;
 	int dark_1			:		"qagamex86.dll",		0x641868;
 	int dark_2			:		"qagamex86.dll",		0x6FA514;
@@ -168,6 +167,7 @@ exit{
 	vars.running 		= 	false;
 }
 
+
 shutdown{
 	timer.IsGameTimePaused = true;
 	vars.running 		= 	false;
@@ -246,8 +246,8 @@ split{
 
 	if(settings["cat_all_new"] && version == "1.45a"){
 
-		if(current.bsp != old.bsp) {
-			if(vars.bsp_list.Contains(current.bsp) && !vars.visited.Contains(current.bsp) && vars.checker_end){
+		if(current.bsp != old.bsp && vars.checker_end) {
+			if(vars.bsp_list.Contains(current.bsp) && !vars.visited.Contains(current.bsp)){
 				if(vars.debugMessage) vars.DebugOutput("Map changed to " + current.bsp);
 				vars.checker_end = false;
 				vars.checker_1 = false;
