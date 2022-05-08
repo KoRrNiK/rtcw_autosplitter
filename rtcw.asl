@@ -586,7 +586,7 @@ split{
 				if(current.dark_1 == 1 && !vars.checker_1){
 					vars.checker_1 = true;
 					checker_yes = true;
-				} else if(current.dark_1 == 2 && !vars.checker_2 && vars.checker_1){
+				} else if(current.dark_2 == 2 && !vars.checker_2 && vars.checker_1){
 					vars.checker_2 = true;
 					vars.checker_end = true;
 					checker_yes = true;
