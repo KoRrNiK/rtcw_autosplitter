@@ -89,7 +89,7 @@ startup {
 
 	// Full Game
 	settings.Add("cat_all", 			true, 		"Full game");
-	settings.Add("cat_all_new", 		true, 		"Full Game ( Segments )");
+	settings.Add("cat_all_new", 		false, 		"Full Game [Segments][Only version: 1.45a]");
 
 	
 	// Only chapter
