@@ -713,7 +713,7 @@ split{
 						if(isFS && cordVillage1) stoppedTimer = true;
 					} else if(isOld || isNew || (isNew && maps == "tram" && cordTram)) stoppedTimer = true;
 				}
-				if(i == 2 && ((maps == "forest" && current.cs == 1 && old.cs == 0 && vars.firstcs == true) || isOld || isNew)) stoppedTimer = true;
+				if(i == 2 && (((maps == "forest" || maps == "assault") && current.cs == 1 && old.cs == 0 && vars.firstcs == true) || isOld || isNew)) stoppedTimer = true;
 				if(i == 3 && (isOld || isNew)) stoppedTimer = true;
 				if(i == 4){
 					if(maps == "xlabs" && version == "1.45a"){
