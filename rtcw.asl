@@ -91,7 +91,6 @@ startup {
 	settings.Add("cat_all", 			true, 		"Full game");
 	settings.Add("cat_all_new", 		false, 		"Full Game [Segments][Only version: 1.45a]");
 
-	
 	// Only chapter
 	settings.Add("chaptersOnly", 		false, 		"Chapters");
 	foreach (var names in vars.chapterNames){
@@ -316,7 +315,7 @@ split{
 
 			if(!vars.checker_end){
 				bool __cordVillage1_hatch = (current.zpos <= -1000.0 && current.zpos >= -1300.0 && current.xpos >= -2700.0 && current.xpos <= 2500.0 && current.ypos <= -314.0 && current.ypos >= -400.0) ? true : false;
-				bool __cordVillage1_door = (current.zpos >= 1780.0 && current.zpos <= 1790.0 && current.xpos >= -1037.0 && current.xpos <= 1010.0 && current.ypos <= 50.0 && current.ypos >= -40.0) ? true : false;
+				bool __cordVillage1_door = (current.zpos >= 1780.0 && current.zpos <= 1920.0 && current.xpos >= -1069.0 && current.xpos <= -978.0 && current.ypos <= 100.0 && current.ypos >= -100.0) ? true : false;
 				if(__cordVillage1_hatch && !vars.checker_1){
 					vars.checker_1 = true;
 					checker_yes = true;
