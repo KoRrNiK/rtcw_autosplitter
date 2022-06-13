@@ -71,6 +71,24 @@ state("WolfSP", "1.42d"){
 	int finish			: 		"qagamex86.dll", 	0x57D7D0, 	0x42c; 
 }
 
+
+// RealRTCW by WolfETPlayer | The bytes were found by KoRrNiK
+state("RealRTCW.x64", "3.3"){
+	string16 bsp    	:			"RealRTCW.x64.exe",         0x1A23424;
+	byte cs 			: 			"RealRTCW.x64.exe",         0x3C18C6C;
+	
+	int client_status	:			"RealRTCW.x64.exe",         0x3C297D4;
+	byte ESC			:			"RealRTCW.x64.exe", 		0x1ABAB44;
+
+	float camera_x		:			"RealRTCW.x64.exe",			0x65DC54;
+	float xpos 			:			"RealRTCW.x64.exe", 		0x64E154;
+	float ypos 			:			"RealRTCW.x64.exe", 		0x3C29708;
+	float zpos 			:			"RealRTCW.x64.exe", 		0x64E158;
+	
+	int finish			: 			"RealRTCW.x64.exe", 		0x64E144;
+}
+
+
 startup {
 	int m_chap = 0, i_chap = 0;
 
@@ -142,6 +160,11 @@ init{
 			vars.running 	=	 true;
 			break;
 		}
+		case 66928640:{
+			version 		= 	"3.3";
+			vars.running 	=	 true;
+			break;
+		}
 		default:{
 			if(vars.debugMessage) vars.DebugOutput("Unrecognized game version. Disabling functionality.");
 			version 		= 	"Unknown";
@@ -152,7 +175,7 @@ init{
 	}
 
 	if(vars.debugMessage){
-		vars.DebugOutput("Game found | Found Patch" + version + " | Module size: "+ idGame);
+		vars.DebugOutput("Game found | Found Patch " + version + " | Module size: "+ idGame);
 	}
 
 	vars.firstcs 		= 	true;
@@ -227,9 +250,9 @@ start{
 split{
 	if(!vars.running) return;
 
-	bool isOld = (version == "1.42d" && current.finish != 0) ? true : false;
+	bool isOld = ((version == "1.42d" && current.finish != 0) || (version == "3.3" && current.finish == 4)) ? true : false;
 	bool isNew = (version == "1.45a" && current.finish == 4 && current.cs == 0 && current.stuck != 3) ? true : false;
-	bool isFS = (current.finish == 4 && current.stuck == 0) ? true : false;
+	bool isFS = (version == "1.45a" && current.finish == 4 && current.stuck == 0) ? true : false;
 
 	bool cordVillage1 = (current.zpos > 4500.0 && current.zpos < 4580.0 && current.xpos > -460.0 && current.xpos < -300.0 ) ? true : false;
 	bool cordTram = (current.xpos < -3850.0 && current.ypos > -1300.0) ? true : false;
@@ -753,6 +776,13 @@ update{
 			}
 			break;
 		}
+		case "3.3":{
+			if((current.client_status == 0) || current.ESC == 1 ) vars.loadStarted = true;
+			else{
+				if(current.camera_x != 0) vars.loadStarted = false;
+			}
+			break;
+		}
 		case "Unknown":{ 
 			return;
 			break;
@@ -760,7 +790,7 @@ update{
 	}
 
 	if(vars.debugMessage){
-		vars.DebugOutput("POSS: X " + current.xpos + " Y " + current.ypos + " Z " + current.zpos + " CS " + current.cs + " F " + current.finish + " CLS " + current.client_status + " S " + current.stuck );
+		vars.DebugOutput("POSS: X " + current.xpos + " Y " + current.ypos + " Z " + current.zpos + " CS " + current.cs + " F " + current.finish + " CLS " + current.client_status + " S " + ((version == "1.45a") ? current.stuck : "only 1.45a"));
 	}
 
 }
