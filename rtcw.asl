@@ -777,7 +777,7 @@ update{
 			break;
 		}
 		case "3.3":{
-			if((current.client_status == 0) || current.ESC == 1 ) vars.loadStarted = true;
+			if((current.client_status == 0) || /*current.ESC == 1*/ ) vars.loadStarted = true;
 			else{
 				if(current.camera_x != 0) vars.loadStarted = false;
 			}
